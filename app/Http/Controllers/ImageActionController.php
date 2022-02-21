@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CompressImageRequest;
 use App\Services\CompressImageService;
 use App\Services\ConvertJpegImage;
 use App\Services\HTMLImageService;
@@ -9,11 +10,10 @@ use App\Services\ResizeImageService;
 use App\Services\WatermarkImageService;
 use Illuminate\Http\Request;
 
-use Intervention\Image\Facades\Image;
 
 class ImageActionController extends Controller
 {
-    public function compress(Request $request)
+    public function compress(CompressImageRequest $request)
     {
         $readyImages = (new CompressImageService)->compress($request);
         return response()->json($readyImages);
@@ -36,7 +36,7 @@ class ImageActionController extends Controller
         $readyImages = HTMLImageService::convert($request->all());
         return response()->json($readyImages);
     }
-    
+
     public function watermark(Request $request)
     {
         $readyImages = WatermarkImageService::watermark($request->all());

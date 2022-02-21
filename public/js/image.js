@@ -46,6 +46,7 @@ async function handleDrop(e) {
         let files = await dt.files;
         refresh(files);
     } catch (err) {
+        alert('Попробуйте снова')
         location.reload()
     }
 }
@@ -109,6 +110,7 @@ function previewFile(file) {
 
 
 function refresh(files) {
+    console.log(files)
     loaderPlay()
 
     switch (location.pathname.substr(1)) {
@@ -269,10 +271,12 @@ function sendRequest() {
         $('.container')[1].appendChild(elem)
         delete resp['old-size']
         delete resp['new-size']
+        afterSend()
     }
-
-    sendData(url, formData, callback)
-    afterSend()
+    let text = 'Сжать JPG, PNG, SVG или GIF с самым лучшим качеством и сжатием. Уменьшить размер файла с вашими ' +
+        'изображениями одновременно.'
+    let failMessage = "Файл не содержит указанное розширение"
+    sendData(url, formData, callback, text, failMessage)
 }
 
 function load() {
@@ -353,7 +357,7 @@ function trackInput(val) {
     document.querySelector('[name = "widthPx"]').setAttribute('old-val', val)
 }
 
-async function sendData(url, formData, callback) {
+async function sendData(url, formData, callback, text, failMessage) {
     loaderPlay()
     await fetch(url, {
         method: 'POST',
@@ -361,8 +365,17 @@ async function sendData(url, formData, callback) {
     }).then(response => response.json())
         .then(data => {
             resp = data
-            $('.safe-transfer')[0].style.display = "none"
-        }).then(() => callback && callback())
+
+        }).then(() => {
+            if (resp.errors) {
+                renewUploadPlace(text)
+                alert(failMessage)
+                window.stop()
+            } else {
+                $('.safe-transfer')[0].style.display = "none"
+                callback && callback()
+            }
+        })
     loaderStop()
 }
 
@@ -837,3 +850,17 @@ function createInput() {
     }, 0.1)
 }
 
+function renewUploadPlace(caption) {
+    fileLs = [];
+    rotateLs = [];
+    let block = $('.wrap-content')
+    block[1].style.display = 'block'
+    block[2].style.display = 'none'
+    block[0].remove()
+    $('.btn-settings')[0].style.display = 'block'
+    $('.content').addClass('white')
+    $('.capt')[0].innerHTML = caption
+    $('.tool-button')[0].remove()
+    document.querySelector('input[type=file]').value = ''
+    loaderStop()
+}

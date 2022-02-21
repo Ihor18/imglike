@@ -55,4 +55,8 @@ class ImageController extends Controller
     {
         return view('pages.compress');
     }
+
+    public function redactor(){
+
+    }
 }
