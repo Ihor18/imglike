@@ -6,10 +6,8 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
-use Imagine\Gd\Imagine;
+
 
 class CompressImageService
 {
@@ -24,6 +22,7 @@ class CompressImageService
         foreach ($request['files'] as $file) {
             if ($file->getPathname()) {
 
+
                 $readyImages['old-size'] += filesize($file);
                 $key = explode('.', $file->getClientOriginalName())[0];
                 if (isset($request['rotates'][$key])) {
@@ -32,7 +31,7 @@ class CompressImageService
                             $this->rotateJPG($file, $request['rotates'][$key]);
                             break;
                         case 'image/gif':
-                            $this->rotateGIF($file, $request['rotates'][$key]);
+                            (new ResizeImageService())->rotateGIF($file, $request['rotates'][$key]);
                             break;
                         case 'image/png':
                             $this->rotatePNG($file, $request['rotates'][$key]);
@@ -56,17 +55,7 @@ class CompressImageService
         imagepng($rotated, $file->getPathname());
     }
 
-    private function rotateGIF($file, $degree)
-    {
 
-        $location = $file->storaAs('public/temp',$file->getClientOriginalName());
-        $imagine = new Imagine();
-
-        $imagine->open($location)
-            ->rotate($degree)
-            ->save($file->getPathname(), array('flatten' => false));
-
-    }
 
     private function rotateJPG($file, $degree)
     {

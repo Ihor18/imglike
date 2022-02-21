@@ -37,7 +37,7 @@
 
 
     <div class="wrp-settings " style="display: none">
-        <div class="btn-settings" onclick="toggle(this)"></div>
+        <div class="btn-settings"></div>
         <!-- rotate -->
         <div class="settings"  >
             <div class="capt">Параметры поворота</div>

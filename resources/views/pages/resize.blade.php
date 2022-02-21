@@ -19,7 +19,7 @@
                         <span>Перетащите в это поле ваши <label for="file_input_id"><a>изображения</a></label></span>
                         <p>или <label for="file_input_id" class="upload-link">загрузите</label>
                             <input type="file" id="file_input_id" name="file" multiple accept="image/*"
-                                   onchange="handleFiles(this.files)"> их с вашего компьютера</p>
+                                   onchange="refresh(this.files)"> их с вашего компьютера</p>
                     </form>
                 </div>
 
@@ -30,18 +30,18 @@
                 {{--                </div>--}}
             </div>
 
-            @include('layouts.download-image',['btnTitle'=>"Скачать повернутые изображения"])
+            @include('layouts.download-image',['btnTitle'=>"Скачать изображения"])
 
         </div>
         @include('layouts.safe-transfer')
     </div>
 
 
-    <div class="wrp-settings ">
-        <div class="btn-settings" style="display: none"></div>
+    <div class="wrp-settings " style="display: none">
+        <div class="btn-settings" ></div>
         <!-- resize -->
         <div class="settings">
-            <div class="capt" style="display: none">Изменить размер</div>
+            <div class="capt" >Изменить размер</div>
             <div class="tabs">
                 <div class="tab-radiobox flex nowrap">
                     <div class="item active" data-tab="tab-pixel">В пикселях</div>

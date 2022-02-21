@@ -278,7 +278,6 @@ function sendRequest() {
 function load() {
     loaderPlay()
     for (img in resp) {
-        console.log(img)
         var a = document.createElement('a');
         a.href = 'data:image/' + img.split('.')[img.split('.').length - 1] + ';base64,' + resp[img];
         a.download = img;
@@ -313,6 +312,7 @@ function createBtn(func, className, src, title, isChange = true) {
 
 function resizeImage() {
     loaderPlay()
+    let pop_up = $('.wrp-settings')[0]
     let isPixel = document.querySelector('[data-tab = "tab-pixel"]').classList.contains("active")
     let csrf = document.querySelector('meta[name="csrf-token"]').content;
     let formData = new FormData()
@@ -322,6 +322,10 @@ function resizeImage() {
         formData.append('files[]', fileLs[key])
     }
 
+    for (let key in rotateLs) {
+        formData.append('rotates[' + key + ']', rotateLs[key])
+    }
+
     if (isPixel) {
         formData.append('widthPx', document.querySelector('[name = "widthPx"]').value)
         formData.append('heightPx', document.querySelector('[name = "heightPx"]').value)
@@ -329,7 +333,8 @@ function resizeImage() {
         formData.append('reduce', document.querySelector('input[name="item-2"]:checked').value)
     }
     sendData('resize-image', formData)
-    $('.wrp-settings')[0].classList.remove('active')
+    pop_up.classList.remove('active')
+    pop_up.style.display = 'none'
     afterSend()
     loaderStop()
 }
@@ -375,6 +380,7 @@ function rotateImage() {
     for (let key in fileLs) {
         formData.append('files[]', fileLs[key])
     }
+
 
     for (let key in rotateLs) {
         formData.append('rotates[' + key + ']', rotateLs[key])
@@ -718,7 +724,6 @@ function convertFromJpeg() {
 
 function meme(file) {
     let reader = new FileReader()
-    console.log(file)
     reader.readAsDataURL(file)
     reader.onloadend = function () {
         meme_preview(reader.result)
@@ -799,7 +804,7 @@ function createInput() {
     textArea.style.width = canvas.clientWidth + 'px'
     textArea.style.height = canvas.clientHeight + 'px'
 
-    console.log(canvas.getBoundingClientRect())
+
     textArea.style.maxHeight = canvas.clientHeight + 'px'
     let innerArea = document.createElement('div')
     textArea.append(innerArea)
