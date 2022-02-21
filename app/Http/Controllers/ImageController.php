@@ -43,12 +43,12 @@ class ImageController extends Controller
 
     public function convertInJpg()
     {
-        return view('pages.convert');
+        return view('pages.convert_in');
     }
 
     public function convertFromJpg()
     {
-        return view('pages.convert');
+        return view('pages.convert_from');
     }
 
     public function compress()

@@ -8,7 +8,6 @@
         несколько изображений в JPG онлайн.
     </div>
 @endsection
-
 @section('content')
     <div class="content white">
         <div id="load" class="container">
