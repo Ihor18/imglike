@@ -4,7 +4,7 @@
 
 @section('header-title',"HTML в изображение")
 @section('header-capt')
-    <div class="capt">Преобразовывайте веб-страницы в JPG или SVG и сохраняйте визуальный аспект..</div>
+    <div class="capt">Преобразовывайте веб-страницы в JPG или SVG и сохраняйте визуальный аспект.</div>
 @endsection
 
 @section('content')

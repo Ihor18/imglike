@@ -95,7 +95,7 @@
                         <p>или <label for="file" class="upload-link" onclick="fileClick()">загрузите</label>
                             <input type="file" id="file_input_id" name="file" accept="image/*"
                                    onchange="refresh(this.files)" multiple> их с вашего компьютера</p>
-                        <input style="display: none" type="file" id="watermark_file" name="watermark_file" accept="image/*">
+                        <input style="display: none" type="file" id="watermark_file" name="watermark_file" accept=".jpg,.jpeg,.png,.bmp,.gif,.svg">
                     </form>
                 </div>
 

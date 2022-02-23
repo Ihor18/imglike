@@ -29,7 +29,7 @@
                 {{--                </div>--}}
             </div>
 
-            @include('layouts.download-image',['btnTitle'=>"Скачать сжатые изображения"])
+            @include('layouts.download-image',['btnTitle'=>"Скачать повернутые изображения"])
 
         </div>
         @include('layouts.safe-transfer')

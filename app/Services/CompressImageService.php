@@ -56,7 +56,6 @@ class CompressImageService
     }
 
 
-
     private function rotateJPG($file, $degree)
     {
         $image = imagecreatefromjpeg($file);
@@ -71,12 +70,10 @@ class CompressImageService
         $height = $size[1];
         $dimg = imagecreatetruecolor($width, $height);
 
-        $background = imagecolorallocate($dimg, 0, 0, 0);
-        imagecolortransparent($dimg, $background);
-        imagealphablending($dimg, false);
-        imagesavealpha($dimg, true);
-        imagecopyresampled($dimg, $image, 0, 0, 0, 0, 0, 0, $width, $height);
+        $bgColor = imagecolorallocatealpha($image, 255, 255, 255, 127);
+        $rotated  = imagerotate($image, $degree, $bgColor);
+        imagesavealpha($rotated, true);
 
-        return imagerotate($image, $degree, 0);
+        return $rotated;
     }
 }

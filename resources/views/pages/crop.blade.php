@@ -23,8 +23,8 @@
                         @csrf
                         <img src="img/open-folder.svg">
                         <span>Перетащите в это поле ваши <label for="file_input_id"><a>изображения</a></label></span>
-                        <p>или <label for="file_input_id" class="upload-link" onclick="fileClick()">загрузите</label>
-                            <input type="file" id="file_input_id" name="file" accept="image/*"
+                        <p>или <label for="file_input_id" class="upload-link">загрузите</label>
+                            <input type="file" id="file_input_id" name="file" accept=".jpg,.jpeg,.png,.bmp,.gif,.svg"
                                    onchange="refresh(this.files)"> их с вашего компьютера</p>
                     </form>
                 </div>

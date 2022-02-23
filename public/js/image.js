@@ -1,10 +1,11 @@
-var fileLs = [];
-var rotateLs = [];
-var resp = [];
-var cropper;
-var format;
-var canvas;
-var ctx;
+let fileLs = [];
+let rotateLs = [];
+let resp = [];
+let cropper;
+let cropImageType;
+let format;
+let canvas;
+let ctx;
 
 
 let dropArea = document.getElementsByClassName('upload-place')[0]
@@ -110,7 +111,6 @@ function previewFile(file) {
 
 
 function refresh(files) {
-    console.log(files)
     loaderPlay()
 
     switch (location.pathname.substr(1)) {
@@ -130,6 +130,7 @@ function refresh(files) {
             handleFiles(files)
             break;
         case 'crop':
+            cropImageType = files[0].type
             enableCrop()
             previewImage(files)
             break;
@@ -266,8 +267,10 @@ function sendRequest() {
         let oldSize = (resp['old-size'] / 1000000).toFixed(2)
         let newSize = (resp['new-size'] / 1000000).toFixed(2)
         let compressResult = Math.round(100 - (newSize / oldSize * 100))
-        elem.innerHTML = "Размер вашего файла уменьшен на " + compressResult + "%<br>" + oldSize + "MB > " +
-            newSize + " MB"
+        if (oldSize / newSize > 1) {
+            elem.innerHTML = "Размер вашего файла уменьшен на " + compressResult + "%<br>" + oldSize + "MB > " +
+                newSize + "MB"
+        }
         $('.container')[1].appendChild(elem)
         delete resp['old-size']
         delete resp['new-size']
@@ -336,10 +339,14 @@ function resizeImage() {
     } else {
         formData.append('reduce', document.querySelector('input[name="item-2"]:checked').value)
     }
-    sendData('resize-image', formData)
     pop_up.classList.remove('active')
     pop_up.style.display = 'none'
-    afterSend()
+
+    let text = 'Все изображения будут изменены с заданными параметрами.'
+    let failMessage = "Файл не содержит указанное розширение"
+
+    sendData('resize-image', formData, afterSend, text, failMessage)
+
     loaderStop()
 }
 
@@ -362,19 +369,21 @@ async function sendData(url, formData, callback, text, failMessage) {
     await fetch(url, {
         method: 'POST',
         body: formData
-    }).then(response => response.json())
-        .then(data => {
-            resp = data
+    }).then(response => response = response.json())
+        .then(data => resp = data).then(() => {
 
-        }).then(() => {
-            if (resp.errors) {
+            if (resp.hasOwnProperty('errors') && resp.errors.file) {
                 renewUploadPlace(text)
                 alert(failMessage)
-                window.stop()
+
+            } else if (resp.hasOwnProperty('errors') && resp.errors.url) {
+                renewHTML(text)
+                alert(failMessage)
             } else {
                 $('.safe-transfer')[0].style.display = "none"
                 callback && callback()
             }
+
         })
     loaderStop()
 }
@@ -448,13 +457,9 @@ function toggle(obj) {
 function crop() {
 
     cropper.getCroppedCanvas().toBlob((blob) => {
-
         loaderPlay()
-
         let reader = new FileReader();
-
         reader.readAsDataURL(blob);
-
         var a = document.createElement('a');
         a.href = window.URL.createObjectURL(blob);
         a.download = Object.keys(fileLs)[0];
@@ -462,7 +467,7 @@ function crop() {
         a.click();
         document.body.removeChild(a);
         loaderStop()
-    })
+    }, cropImageType)
 }
 
 function changeCropperBox() {
@@ -493,6 +498,7 @@ function htmlToImage() {
 
     data['height'] = 1080
     data['width'] = 1920
+    data['full-page'] = true
     data['format'] = 'png';
     data['url'] = $('[name="url"]')[0].value
 
@@ -506,7 +512,6 @@ function htmlToImage() {
     callback = function () {
         document.getElementsByClassName('capt')[0].innerHTML = "Все изображения будут изменены с заданными параметрами..";
         createBtn("convertHtml()", 'tool-button', "../img/icon-html.svg", "Конвертировать HTML")
-        $('.wrp-settings')[0].style.display = 'block'
         let main = document.createElement('div')
         main.className = 'wrap-content'
         let block = document.createElement('div')
@@ -518,9 +523,10 @@ function htmlToImage() {
         block.appendChild(image)
         main.appendChild(block)
         $('.container')[2].appendChild(main)
+        $('.wrp-settings')[0].style.display = 'block'
     }
 
-    sendData(url, formData, callback)
+    sendData(url, formData, callback, 'Преобразовывайте веб-страницы в JPG или SVG и сохраняйте визуальный аспект.', 'Введите правильный url')
 
 }
 
@@ -546,7 +552,7 @@ function convertHtml() {
         formData.append(key, value);
     }
 
-    sendData(url, formData, load)
+    sendData(url, formData, load, 'Преобразовывайте веб-страницы в JPG или SVG и сохраняйте визуальный аспект.', 'Введите правильный url')
 }
 
 function enterURL(value) {
@@ -862,5 +868,19 @@ function renewUploadPlace(caption) {
     $('.capt')[0].innerHTML = caption
     $('.tool-button')[0].remove()
     document.querySelector('input[type=file]').value = ''
+    loaderStop()
+}
+
+function renewHTML(caption) {
+    let block = $('.wrap-content')
+    let settings = $('.wrp-settings')
+    let htmlBtn = $('.tool-button')
+    $("input[name='url']")[0].value = ''
+    settings[0].style.display = 'none'
+    $('.capt')[0].innerHTML = caption
+    htmlBtn.hasOwnProperty(0) && htmlBtn[0].remove()
+    settings[0].classList.remove('active')
+    block[0].style.display = 'block'
+    block.hasOwnProperty(1) && block[1].remove()
     loaderStop()
 }
