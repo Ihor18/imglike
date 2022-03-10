@@ -1,10 +1,10 @@
 @extends('layouts.main')
-@section('title',__('localization.index_title'))
+@section('title',"HTML".' '.__('localization.in').' '.__('localization.image'))
 @section('meta_description',"")
 
-@section('header-title',"HTML в изображение")
+@section('header-title',"HTML".' '.__('localization.in').' '.__('localization.image'))
 @section('header-capt')
-    <div class="capt">Преобразовывайте веб-страницы в JPG или SVG и сохраняйте визуальный аспект.</div>
+    <div class="capt">{{__('localization.convert_web_pages')}}</div>
 @endsection
 
 @section('content')
@@ -15,20 +15,15 @@
                 <div class="url-area">
                     <form action="">
                         <div class="input flex aic jcsb">
-                            <img src="img/website-icon.svg">
+                            <img src="{{asset('img/website-icon.svg')}}">
                             <input type="text" name="url" onchange="enterURL(this.value)" placeholder="https://online-tetris.ru/">
                         </div>
 
                     </form>
-                    <button onclick="htmlToImage()">Добавить URL</button>
+                    <button onclick="htmlToImage()">{{__('localization.add')}} URL</button>
                 </div>
             </div>
-
-            <div class="safe-transfer flex aic jcc">
-                <img src="img\lock-icon.svg">
-                <span>Безопасная передача файлов и данных</span>
-            </div>
-
+            @include('layouts.safe-transfer')
         </div>
     </div>
 
@@ -36,22 +31,22 @@
         <div class="btn-settings"></div>
         <!-- html -->
         <div class="settings">
-            <div class="capt">HTML в изображение</div>
+            <div class="capt">HTML {{__('localization.in')}} {{__('localization.image')}}</div>
             <div class="html-img">
                 <ul>
                     <li>
-                        <p>Введите адрес:</p>
+                        <p>{{__('localization.enter_address')}}:</p>
                         <div class="input-field flex jcsb aic">
                             <input type="text" name="url" required onchange="enterURL(this.value)" placeholder="https://online-tetris.ru/" class="url">
                             <button class="btn-reload" onclick="clearField('name','url')"></button>
                         </div>
                     </li>
                     <li>
-                        <p>Размер экрана:</p>
+                        <p>{{__('localization.screen_size')}}:</p>
                         <div class="input-field">
                             <div class="custom-select">
                                 <select id="size">
-                                    <option data-width="800" data-height="600" value="0">Выберите размер:</option>
+                                    <option data-width="800" data-height="600" value="0">{{__('localization.select_size')}}:</option>
                                     <option data-width="1920" data-height="1080" value="1">1920х1080</option>
                                     <option data-width="980" data-height="640" value="2">980х640</option>
                                     <option data-width="1360" data-height="980" value="3">1360х980</option>
@@ -60,11 +55,11 @@
                         </div>
                     </li>
                     <li>
-                        <p>Ковертировать в:</p>
+                        <p>{{__('localization.convert')}} {{__('localization.in')}}:</p>
                         <div class="input-field">
                             <div class="custom-select">
                                 <select id="format">
-                                    <option value="png">Выберите формат:</option>
+                                    <option value="png">{{__('localization.select_format')}}:</option>
                                     <option value="jpg">jpg</option>
                                     <option value="png">png</option>
                                     <option value="pdf">pdf</option>
@@ -73,17 +68,17 @@
                         </div>
                     </li>
                     <li>
-                        <p>Настройки HTML:</p>
+                        <p>{{__('localization.settings')}} HTML:</p>
                         <div class="input-field">
-                            <label class="wrp-select wrp-checkbox">Заблокировать рекламу
+                            <label class="wrp-select wrp-checkbox">{{__('localization.block_ads')}}
                                 <input type="checkbox" name="add-block" checked="checked">
                                 <span class="checkmark"></span>
                             </label>
-                            <label class="wrp-select wrp-checkbox">Скриншот всей страницы
+                            <label class="wrp-select wrp-checkbox">{{__('localization.full_screen')}}
                                 <input type="checkbox" name="full-page" checked="checked">
                                 <span class="checkmark"></span>
                             </label>
-                            <label class="wrp-select wrp-checkbox">Удалить всплывающие окна
+                            <label class="wrp-select wrp-checkbox">{{__('localization.remove_pop_ups')}}
                                 <div class="info"></div>
                                 <input type="checkbox" name="delete-pop-up">
                                 <span class="checkmark"></span>
@@ -94,7 +89,7 @@
             </div>
             <div class="bottom-btn flex jcc">
                 <button class="btn-html" onclick="convertHtml()">
-                    <p>Конвертировать HTML</p>
+                    <p>{{__('localization.convert')}} HTML</p>
                 </button>
             </div>
         </div>

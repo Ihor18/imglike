@@ -588,6 +588,7 @@ function carousel(files) {
         let element = document.createElement('li')
         let img = document.createElement('img')
         reader.onloadend = function () {
+            img.className = 'watermark-image'
             img.src = reader.result
         }
         element.appendChild(img)
@@ -734,9 +735,10 @@ function convertFromJpeg() {
     for (const [key, value] of Object.entries(data)) {
         formData.append(key, value);
     }
+    let text = 'Все изображения будут изменены с заданными параметрами.'
+    let failMessage = "Некоректно введеные данные"
+    sendData(url, formData,afterSend,text,failMessage)
 
-    sendData(url, formData)
-    afterSend()
     $('.wrp-settings')[0].classList.remove('active')
     $('.btn-settings')[0].style.display = 'none';
 }

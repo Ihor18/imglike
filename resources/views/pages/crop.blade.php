@@ -1,11 +1,11 @@
 @extends('layouts.main')
-@section('title',__('localization.index_title'))
+@section('title',__('localization.cut').' '.__('localization.image'))
 @section('meta_description',"")
 
-@section('header-title',"Обрезать изображение")
+@section('header-title',__('localization.cut').' '.__('localization.image'))
 @section('header-capt')
-    <div class="capt">Все изображения будут изменены с заданными параметрами.</div>
-    <button class="tool-button" style="display: none" onclick="crop()"><img src="img/icon-crop.svg"><span>Обрезать изображение</span></button>
+    <div class="capt">{{__('localization.crop_desk')}}</div>
+    <button class="tool-button" style="display: none" onclick="crop()"><img src="{{asset('img/icon-crop.svg')}}"><span>{{__('localization.cut').' '.__('localization.image')}}</span></button>
 @endsection
 
 @section('style')
@@ -21,15 +21,15 @@
                 <div class="upload-place">
                     <form id="send-image" method="post" action="{{route('compress-image')}}">
                         @csrf
-                        <img src="img/open-folder.svg">
-                        <span>Перетащите в это поле ваши <label for="file_input_id"><a>изображения</a></label></span>
-                        <p>или <label for="file_input_id" class="upload-link">загрузите</label>
+                        <img src="{{asset('img/open-folder.svg')}}">
+                        <span> {{__('localization.drag')}} <label for="file_input_id"><a>{{__('localization.image')}}</a></label></span>
+                        <p>{{__('localization.or')}} <label for="file_input_id" class="upload-link" >{{__('localization.upload')}}</label>
                             <input type="file" id="file_input_id" name="file" accept=".jpg,.jpeg,.png,.bmp,.gif,.svg"
-                                   onchange="refresh(this.files)"> их с вашего компьютера</p>
+                                   onchange="refresh(this.files)"> {{__('localization.upload_text')}}</p>
                     </form>
                 </div>
 
-                <button class="upload-mobile" onclick="$('#file_input_id').click()">Загрузить изображения</button>
+                @include('layouts.download',['btnText'=>__('localization.upload_images')])
             </div>
         </div>
         @include('layouts.safe-transfer')
@@ -38,28 +38,28 @@
         <div class="btn-settings" style="display: none;" ></div>
         <!-- crop -->
         <div class="settings">
-            <div class="capt">Обрезать изображение</div>
+            <div class="capt">{{__('localization.cut').' '.__('localization.image')}}</div>
             <div class="row flex aic jcsb">
-                <p>Ширина, px</p>
+                <p>{{__('localization.width')}}, px</p>
                 <input  name="width" onchange="changeCropperBox()" value="100">
             </div>
             <div class="row flex aic jcsb">
-                <p>Высота, px</p>
+                <p>{{__('localization.height')}}, px</p>
                 <input  name="height" onchange="changeCropperBox()" value="100">
             </div>
             <div class="row flex aic jcsb">
-                <p>Положение X, px</p>
+                <p>{{__('localization.position')}} X, px</p>
                 <input  name="x" onchange="changeCropperBox()"
                        value="100">
             </div>
             <div class="row flex aic jcsb">
-                <p>Положение Y, px</p>
+                <p>{{__('localization.position')}} Y, px</p>
                 <input  name="y" onchange="changeCropperBox()"
                        value="100">
             </div>
             <div class="bottom-btn flex jcc">
                 <button class="btn-crop" onclick="crop()">
-                    <p>Обрезать изображение</p>
+                    <p>{{__('localization.cut').' '.__('localization.image')}}</p>
                 </button>
             </div>
         </div>

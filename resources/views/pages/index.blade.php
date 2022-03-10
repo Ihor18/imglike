@@ -1,11 +1,11 @@
 @extends('layouts.main')
-@section('title',__('localization.index_title'))
+@section('title','IMGLike')
 @section('meta_description',"")
 
-@section('header-title',"Безплатные онлайн редакторы изображений")
+@section('header-title',__('localization.index_header_title'))
 @section('header-capt')
-    <div class="caption">Попробуйте сейчас без регистрации</div>
-    <div class="capt">*Ваши изображения мы сохраняем у себя. Это безопасно и конфиденциально</div>
+    <div class="caption">{{__('localization.index_caption')}}</div>
+    <div class="capt">*{{__('localization.index_capt')}}</div>
 @endsection
 @section('body-class','class=main-page')
 @section('content')
@@ -16,110 +16,100 @@
                 <li>
                     <a href="{{route('compress')}}">
                         <div class="icon">
-                            <img src="img/icon-tiny.svg">
+                            <img src="{{asset('img/icon-tiny.svg')}}">
                         </div>
-                        <p>Сжать изображение</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
+                        <p>{{__('localization.compress').' '.__('localization.image')}}</p>
+                        <span>{{__('localization.index_compress_capt')}}</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{route('resize')}}">
                         <div class="icon">
-                            <img src="img/icon-resize.svg">
+                            <img src="{{asset('img/icon-resize.svg')}}">
                         </div>
-                        <p>Изменить размер</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
+                        <p>{{__('localization.change').' '.__('localization.size')}}</p>
+                        <span>{{__('localization.index_compress_capt')}}</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{route('crop')}}">
                         <div class="icon">
-                            <img src="img/icon-crop.svg">
+                            <img src="{{asset('img/icon-crop.svg')}}">
                         </div>
-                        <p>Обрезать изображение</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
-                    </a>
+                        <p>{{__('localization.cut').' '.__('localization.image')}}</p>
+                        <span>{{__('localization.index_compress_capt')}}</span> </a>
                 </li>
                 <li>
                     <a href="{{route('rotate')}}">
                         <div class="icon">
-                            <img src="img/icon-rotate.svg">
+                            <img src="{{asset('img/icon-rotate.svg')}}">
                         </div>
-                        <p>Повернуть изображение</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
-                    </a>
+                        <p>{{__('localization.rotate').' '.__('localization.image')}}</p>
+                        <span>{{__('localization.index_compress_capt')}}</span></a>
                 </li>
                 <li>
                     <a href="{{route('redactor')}}">
                         <div class="icon">
-                            <img src="img/icon-redactor.svg">
+                            <img src="{{asset('img/icon-redactor.svg')}}">
                         </div>
-                        <p>Редактор изображений</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
-                    </a>
+                        <p>{{__('localization.redactor').' '.__('localization.image')}}</p>
+                        <span>{{__('localization.index_compress_capt')}}</span></a>
                 </li>
                 <li>
                     <a href="{{route('watermark')}}">
                         <div class="icon">
-                            <img src="img/icon-watermark.svg">
+                            <img src="{{asset('img/icon-watermark.svg')}}">
                         </div>
-                        <p>Наложить водяной знак</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
-                    </a>
+                        <p>{{__('localization.impose').' '.__('localization.watermark')}}</p>
+                        <span>{{__('localization.index_compress_capt')}}</span></a>
                 </li>
                 <li>
                     <a href="{{route('convert-in-jpg')}}">
                         <div class="icon">
-                            <img src="img/icon-convert-2.svg">
+                            <img src="{{asset('img/icon-convert-2.svg')}}">
                         </div>
-                        <p>Конвертироваь в JPG</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
-                    </a>
+                        <p>{{__('localization.convert').' '.__('localization.in')}} JPG</p>
+                        <span>{{__('localization.index_compress_capt')}}</span></a>
                 </li>
                 <li>
                     <a href="{{route('convert-from-jpg')}}">
                         <div class="icon">
-                            <img src="img/icon-convert-1.svg">
+                            <img src="{{asset('img/icon-convert-1.svg')}}">
                         </div>
-                        <p>Конвертироваь из JPG</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
-                    </a>
+                        <p>{{__('localization.convert').' '.__('localization.from')}}</p>
+                        <span>{{__('localization.index_compress_capt')}}</span></a>
                 </li>
                 <li>
                     <a href="{{route('html-to-image')}}">
                         <div class="icon">
-                            <img src="img/icon-html.svg">
+                            <img src="{{asset('img/icon-html.svg')}}">
                         </div>
-                        <p>HTML в изображение</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
-                    </a>
+                        <p>HTML {{__('localization.in').' '.__('localization.image')}}</p>
+                        <span>{{__('localization.index_compress_capt')}}</span></a>
                 </li>
                 <li>
                     <a href="{{route('meme')}}">
                         <div class="icon">
-                            <img src="img/icon-generator.svg">
+                            <img src="{{asset('img/icon-generator.svg')}}">
                         </div>
-                        <p>Генератор мемов</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
-                    </a>
+                        <p>{{__('localization.meme_generator')}}</p>
+                        <span>{{__('localization.index_compress_capt')}}</span></a>
                 </li>
                 <li>
                     <a href="{{route('photoshop')}}">
                         <div class="icon">
-                            <img src="img/icon-photoshop.svg">
+                            <img src="{{asset('img/icon-photoshop.svg')}}">
                         </div>
-                        <p>Фотошоп онлайн</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
-                    </a>
+                        <p>{{__('localization.photoshop_online')}}</p>
+                        <span>{{__('localization.index_compress_capt')}}</span></a>
                 </li>
                 <li>
                     <a href="">
                         <div class="icon" style="background: 0;">
-                            <img src="img/more.jpg">
+                            <img src="{{asset('img/more.jpg')}}">
                         </div>
-                        <p>Еще больше возможностей</p>
-                        <span>Задайте размеры в процентах или пикселях и измените размер изображений JPG, PNG, SVG и GIF.</span>
-                    </a>
+                        <p>{{__('localization.more_features')}}</p>
+                        <span>{{__('localization.index_compress_capt')}}</span></a>
                 </li>
             </ul>
         </div>
@@ -128,36 +118,24 @@
     <div class="why-imglike">
         <div class="container">
             <div class="image">
-                <img src="img/screen-1.png">
+                <img src="{{asset('img/screen-1.png')}}">
             </div>
             <div class="text">
                 <div class="owl-carousel owl-theme">
                     <div class="item">
-                        <div class="title">Пакетное редактирование фотографий</div>
-                        <p>С помощью пакетной обработки файлов вы можете конвертировать несколько фотографий
-                            одновременно. <br>Сервис IMGLike позволяет преобразовывать файлы форматов PNG, JPG, GIF,
-                            WEBP, HEIC, RAW и многие другие. Групповое преобразование файлов размером до 1 ГБ за задачу
-                            в пакете Premium.</p>
+                        <div class="title">{{__('localization.batch_photo')}}</div>
+                        <p>{{__('localization.batch_desk1')}}<br>{{__('localization.batch_desk2')}}</p>
                     </div>
                     <div class="item">
-                        <div class="title">Пакетное редактирование фотографий 2</div>
-                        <p>С помощью пакетной обработки файлов вы можете конвертировать несколько фотографий
-                            одновременно. <br>Сервис IMGLike позволяет преобразовывать файлы форматов PNG, JPG, GIF,
-                            WEBP, HEIC, RAW и многие другие. Групповое преобразование файлов размером до 1 ГБ за задачу
-                            в пакете Premium.</p>
+                        <div class="title">{{__('localization.batch_photo')}} 2</div>
+                        <p>{{__('localization.batch_desk1')}}<br>{{__('localization.batch_desk2')}}</p>
                     </div>
                     <div class="item">
-                        <div class="title">Пакетное редактирование фотографий 3</div>
-                        <p>С помощью пакетной обработки файлов вы можете конвертировать несколько фотографий
-                            одновременно. <br>Сервис IMGLike позволяет преобразовывать файлы форматов PNG, JPG, GIF,
-                            WEBP, HEIC, RAW и многие другие. Групповое преобразование файлов размером до 1 ГБ за задачу
-                            в пакете Premium.</p>
+                        <div class="title">{{__('localization.batch_photo')}}</div>
+                        <p>{{__('localization.batch_desk1')}}<br>{{__('localization.batch_desk2')}}</p>
                     </div>
                 </div>
-
             </div>
-
-
         </div>
     </div>
 

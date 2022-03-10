@@ -1,11 +1,12 @@
 @extends('layouts.main')
-@section('title',__('localization.index_title'))
+@section('title',__('localization.impose').' '.__('localization.watermark'))
 @section('meta_description',"")
 
-@section('header-title',"Наложить водяной знак")
+@section('header-title',__('localization.impose').' '.__('localization.watermark'))
 @section('header-capt')
-    <div class="capt">Все изображения будут изменены с заданными параметрами.</div>
-   <button class="tool-button" onclick="watermarkConvert()" style="display: none"><img src="img/icon-watermark.svg"><span>Поставить знак</span></button>
+    <div class="capt">{{__('localization.download_rotated')}}</div>
+    <button class="tool-button" onclick="watermarkConvert()" style="display: none"><img
+            src="{{asset('img/icon-watermark.svg')}}"><span>{{__('localization.put_up_sign')}}</span></button>
 @endsection
 
 @section('style')
@@ -90,12 +91,13 @@
                 <div class="upload-place">
                     <form id="send-image" method="post" action="{{route('compress-image')}}">
                         @csrf
-                        <img src="img/open-folder.svg">
-                        <span>Перетащите в это поле ваши <label for="file_input_id"><a>изображения</a></label></span>
-                        <p>или <label for="file" class="upload-link" onclick="fileClick()">загрузите</label>
+                        <img src="{{asset('img/open-folder.svg')}}">
+                        <span> {{__('localization.drag')}} <label for="file_input_id"><a>{{__('localization.image')}}</a></label></span>
+                        <p>{{__('localization.or')}} <label for="file_input_id" class="upload-link" >{{__('localization.upload')}}</label>
                             <input type="file" id="file_input_id" name="file" accept="image/*"
-                                   onchange="refresh(this.files)" multiple> их с вашего компьютера</p>
-                        <input style="display: none" type="file" id="watermark_file" name="watermark_file" accept=".jpg,.jpeg,.png,.bmp,.gif,.svg">
+                                   onchange="refresh(this.files)" multiple> {{__('localization.upload_text')}}</p>
+                        <input style="display: none" type="file" id="watermark_file" name="watermark_file"
+                               accept=".jpg,.jpeg,.png,.bmp,.gif,.svg">
                     </form>
                 </div>
 
@@ -106,9 +108,7 @@
                     </ul>
                 </div>
             </div>
-
-            <button class="upload-mobile" onclick="fileClick()">Загрузить изображения</button>
-
+            @include('layouts.download',['btnText'=>__('localization.upload_images')])
         </div>
         @include('layouts.safe-transfer')
 
@@ -116,32 +116,44 @@
             <div class="btn-settings"></div>
             <!-- watermark -->
             <div class="settings">
-                <div class="capt">Вариант водяного знака</div>
+                <div class="capt">{{__('localization.watermark_option')}}</div>
                 <div class="html-img">
-                                        <button class="btn-grey add-img" onclick="uploadWatermarkPreview()"><p>Добавить изображение</p></button>
-                                        <button class="btn-grey add-text" onclick="showWatermarkOptions(true)" ><p>Добавить текст</p></button>
+                    <button class="btn-grey add-img" onclick="uploadWatermarkPreview()"><p>{{__('localization.add').' '.__('localization.image')}}</p>
+                    </button>
+                    <button class="btn-grey add-text" onclick="showWatermarkOptions(true)"><p>{{__('localization.add').' '.__('localization.text')}}</p>
+                    </button>
                     <ul id="watermark-options" style="display: none">
                         <li id="text-input" style="display: none">
-                            <p>Введите текст:</p>
+                            <p>{{__('localization.enter_text')}}:</p>
                             <div class="input-field flex jcsb aic">
-                                <input type="text" name="watermark" required onchange="enterURL(this.value)" class="url">
+                                <input type="text" name="watermark" required onchange="enterURL(this.value)"
+                                       class="url">
                             </div>
                         </li>
                         <li>
-                            <p>Положение:</p>
+                            <p>{{__('localization.position')}}:</p>
                             <div class="input-field">
                                 <div class="custom-select">
                                     <select id="position_mark">
-                                        <option data-valign="top" data-align="left" value="top-left">Позиция:</option>
-                                        <option data-valign="top" data-align="left" value="top-left">Сверху слева</option>
-                                        <option data-valign="top" data-align="center" value="top">Сверху по центру</option>
-                                        <option data-valign="top" data-align="right" value="top-right">Сверху справа</option>
-                                        <option data-valign="middle" data-align="left" value="left">Слева по центру</option>
-                                        <option data-valign="middle" data-align="center" value="center">По центру</option>
-                                        <option data-valign="middle" data-align="right" value="right">Справа по центру</option>
-                                        <option data-valign="bottom" data-align="left" value="bottom-left">Снизу слева</option>
-                                        <option data-valign="bottom" data-align="center" value="bottom">Снизу по центру</option>
-                                        <option data-valign="bottom" data-align="right" value="bottom-right">Снизу справа</option>
+                                        <option data-valign="top" data-align="left" value="top-left">{{__('localization.position')}}:</option>
+                                        <option data-valign="top" data-align="left" value="top-left">{{__('localization.top_left')}}:
+                                        </option>
+                                        <option data-valign="top" data-align="center" value="top">{{__('localization.top_center')}}:
+                                        </option>
+                                        <option data-valign="top" data-align="right" value="top-right">{{__('localization.top_right')}}:
+                                        </option>
+                                        <option data-valign="middle" data-align="left" value="left">{{__('localization.left_center')}}:
+                                        </option>
+                                        <option data-valign="middle" data-align="center" value="center">{{__('localization.centered')}}:
+                                        </option>
+                                        <option data-valign="middle" data-align="right" value="right">{{__('localization.right_center')}}:
+                                        </option>
+                                        <option data-valign="bottom" data-align="left" value="bottom-left">{{__('localization.bottom_left')}}:
+                                        </option>
+                                        <option data-valign="bottom" data-align="center" value="bottom">{{__('localization.bottom_center')}}:
+                                        </option>
+                                        <option data-valign="bottom" data-align="right" value="bottom-right">{{__('localization.bottom_right')}}:
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -149,19 +161,19 @@
                         <li>
                             <div><p style="margin: 10px 0;font-size:16px;color: black">Отступ от края:</p>
                                 <div class="row flex aic jcsb">
-                                    <p>Позиция X</p>
+                                    <p>{{__('localization.position')}}: X</p>
                                     <input type="number" name="x-value" value="10">
                                 </div>
                                 <div class="row flex aic jcsb">
-                                    <p>Позиция Y</p>
+                                    <p>{{__('localization.position')}}: Y</p>
                                     <input type="number" name="y-value" value="10">
                                 </div>
                                 <div class="row flex aic jcsb" id="font-size" style="display: none">
-                                    <p>Размер шрифта</p>
+                                    <p>{{__('localization.font_size')}}:</p>
                                     <input type="number" name="font-size" value="24">
                                 </div>
                                 <div class="row flex aic jcsb" id="angle" style="display: none">
-                                    <p>Поворот°</p>
+                                    <p>{{__('localization.turn')}}:°</p>
                                     <input type="number" name="angle" value="0">
                                 </div>
                             </div>
@@ -171,12 +183,12 @@
                 </div>
                 <div class="bottom-btn flex jcc" style="display: none">
                     <button class="btn-watermark" onclick="watermarkConvert()">
-                        <p>Поставить знак</p>
+                        <p>{{__('localization.put_up_sign')}}</p>
                     </button>
                 </div>
             </div>
         </div>
-        @include('layouts.download-image',['btnTitle'=>"Скачать изображения"])
+        @include('layouts.download-image',['btnTitle'=>__('download_image')])
     </div>
 
 

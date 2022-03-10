@@ -1,10 +1,10 @@
 @extends('layouts.main')
-@section('title',__('localization.index_title'))
+@section('title',__('localization.meme_generator'))
 @section('meta_description',"")
 
-@section('header-title',"Генератор мемов")
+@section('header-title',__('localization.meme_generator'))
 @section('header-capt')
-    <div class="capt">Создайте мем из изображений JPG, GIF или PNG. Отредактируйте свое изображение и создайте мем.</div>
+    <div class="capt">{{__('localization.meme_capt')}}</div>
 @endsection
 
 @section('content')
@@ -12,22 +12,21 @@
         <div class="container">
             <div class="wrap-content ">
                 <div class="upload-place">
-                    <img src="img/open-folder.svg">
-                    <span>Перетащите в это поле ваши <a href="">изображения</a></span>
-                    <p>или <a href="">загрузите</a> их с вашего компьютера</p>
+                    <img src="{{asset('img/open-folder.svg')}}">
+                    <span> {{__('localization.drag')}} <label for="file_input_id"><a>{{__('localization.image')}}</a></label></span>
+                    <p>{{__('localization.or')}} <label for="file_input_id" class="upload-link" >{{__('localization.upload')}}</label>
+                        <input type="file" id="file_input_id" name="file" multiple accept=".jpg,.jpeg,.png,.bmp,.gif,.svg"
+                               onchange="refresh(this.files)"> {{__('localization.upload_text')}}</p>
                 </div>
-                <button class="upload-mobile">Загрузить изображения</button>
+                <button class="upload-mobile" onclick="mobileBtnClick()">{{__('localization.upload_images')}}</button>
                 <div class="upload-buttons flex aic jcc">
-                    <button><img src="img/google-drive.svg">Google Drive</button>
-                    <button><img src="img/dropbox.svg">Dropbox</button>
-                    <span>или</span>
-                    <button class="btn-temp show-modal" data-pop="pop-mem">Выбрать шаблон мема</button>
+                    <button><img src="{{asset('img/google-drive.svg')}}">Google Drive</button>
+                    <button><img src="{{asset('img/dropbox.svg')}}">Dropbox</button>
+                    <span>{{__('localization.or')}}</span>
+                    <button class="btn-temp show-modal" data-pop="pop-mem">{{__('localization.meme_template')}}</button>
                 </div>
             </div>
-            <div class="safe-transfer flex aic jcc">
-                <img src="img\lock-icon.svg">
-                <span>Безопасная передача файлов и данных</span>
-            </div>
+            @include('layouts.safe-transfer')
         </div>
     </div>
 
@@ -35,24 +34,24 @@
         <div class="btn-settings"></div>
         <!-- generator -->
         <div class="settings">
-            <div class="capt">Параметры генератора</div>
+            <div class="capt">{{__('localization.generator_parameters')}}</div>
             <div class="tabs">
                 <div class="tab-radiobox flex nowrap">
-                    <div class="item active" data-tab="tab-inner">Текст<br>внутри</div>
-                    <div class="item" data-tab="tab-outer">Текст<br>снаружи</div>
+                    <div class="item active" data-tab="tab-inner">{{__('localization.text')}}<br>{{__('localization.inside')}}</div>
+                    <div class="item" data-tab="tab-outer">{{__('localization.text')}}<br>{{__('localization.outside')}}</div>
                 </div>
                 <div class="tab-content current tab-inner">
-                    <button class="btn-grey add-img"><p>Добавить изображение</p></button>
-                    <button onclick="createInput()" class="btn-grey add-text"><p>Добавить текст</p></button>
+                    <button class="btn-grey add-img"><p>{{__('localization.add')}} {{__('localization.image')}}</p></button>
+                    <button onclick="createInput()" class="btn-grey add-text"><p>{{__('localization.add')}} {{__('localization.stext')}}</p></button>
                 </div>
                 <div class="tab-content tab-outer">
-                    <button class="btn-grey add-img"><p>Добавить изображение</p></button>
-                    <button class="btn-grey add-text"><p>Добавить текст</p></button>
+                    <button class="btn-grey add-img"><p>{{__('localization.add')}} {{__('localization.image')}}</p></button>
+                    <button class="btn-grey add-text"><p>{{__('localization.add')}} {{__('localization.stext')}}</p></button>
                 </div>
             </div>
             <div class="bottom-btn flex jcc">
                 <button class="btn-mem">
-                    <p>Сгенерировать мем</p>
+                    <p>{{__('localization.generate_meme')}}</p>
                 </button>
             </div>
         </div>
@@ -61,7 +60,7 @@
 
     <div class="pop-up pop-mem">
         <a class="close"></a>
-        <div class="capt">Шаблон мема</div>
+        <div class="capt">{{__('localization.meme_template')}}</div>
         <form action="#" method="post">
             <div class="search flex aic jcsb">
                 <input type="" name="" placeholder="https://online-tetris.ru/">
@@ -72,9 +71,9 @@
             <div class="item">
                 <p>Drake Hotline Bling</p>
                 <div class="image">
-                    <img src="img/mem.jpg">
+                    <img src="{{asset('img/mem.jpg')}}">
                 </div>
-                <button onclick="chooseCanvas(0)">Использовать</button>
+                <button onclick="chooseCanvas(0)">{{__('localization.use')}}</button>
             </div>
             <div class="item">
                 <p>Drake Hotline Bling</p>
@@ -82,22 +81,14 @@
                     <img
                         src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg">
                 </div>
-                <button data-id="1">Использовать</button>
+                <button data-id="1">{{__('localization.use')}}</button>
             </div>
             <div class="item">
                 <p>Drake Hotline Bling</p>
                 <div class="image">
-                    <img src="img/mem.jpg">
+                    <img src="{{asset('img/mem.jpg')}}">
                 </div>
-                <button data-id="2">Использовать</button>
-            </div>
-            <div class="item">
-                <p>Drake Hotline Bling</p>
-                <div class="image">
-                    <img
-                        src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg">
-                </div>
-                <button data-id="3">Использовать</button>
+                <button data-id="2">{{__('localization.use')}}</button>
             </div>
             <div class="item">
                 <p>Drake Hotline Bling</p>
@@ -105,7 +96,15 @@
                     <img
                         src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg">
                 </div>
-                <button data-id="4">Использовать</button>
+                <button data-id="3">{{__('localization.use')}}</button>
+            </div>
+            <div class="item">
+                <p>Drake Hotline Bling</p>
+                <div class="image">
+                    <img
+                        src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg">
+                </div>
+                <button data-id="4">{{__('localization.use')}}</button>
             </div>
         </div>
     </div>

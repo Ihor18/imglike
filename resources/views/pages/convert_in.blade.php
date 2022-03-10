@@ -1,11 +1,11 @@
 @extends('layouts.main')
-@section('title',__('localization.index_title'))
+@section('title',,__('localization.convert').' '.__('localization.in').' '."JPG")
 @section('meta_description',"")
 
-@section('header-title',"Конвертировать в JPG")
+@section('header-title',__('localization.convert').' '.__('localization.in').' '."JPG")
 @section('header-capt')
-    <div class="capt">Преобразовывайте форматы PNG, GIF, TIF, PSD, SVG, WEBP, HEIC или RAW to JPG. Конвертируйте сразу
-        несколько изображений в JPG онлайн.
+    <div class="capt">
+        {{__('localization.convert_formats')}}
     </div>
 @endsection
 @section('content')
@@ -15,18 +15,18 @@
                 <div class="upload-place">
                     <form id="send-image" method="post" action="{{route('compress-image')}}">
                         @csrf
-                        <img src="img/open-folder.svg">
-                        <span>Перетащите в это поле ваши <label for="file_input_id"><a>изображения</a></label></span>
-                        <p>или <label for="file_input_id" class="upload-link">загрузите</label>
+                        <img src="{{asset('img/open-folder.svg')}}">
+                        <span> {{__('localization.drag')}} <label for="file_input_id"><a>{{__('localization.image')}}</a></label></span>
+                        <p>{{__('localization.or')}} <label for="file_input_id" class="upload-link" >{{__('localization.upload')}}</label>
                             <input type="file" id="file_input_id" name="file" multiple accept=".jpg,.jpeg,.png,.bmp,.gif,.svg"
-                                   onchange="refresh(this.files)"> их с вашего компьютера</p>
+                                   onchange="refresh(this.files)"> {{__('localization.upload_text')}}</p>
                     </form>
                 </div>
 
-                <button class="upload-mobile" onclick="mobileBtnClick()">Загрузить изображения</button>
+                @include('layouts.download',['btnText'=>__('localization.upload_images')])
             </div>
 
-            @include('layouts.download-image',['btnTitle'=>"Скачать изображения"])
+            @include('layouts.download-image',['btnTitle'=>__('localization.download_images')])
 
         </div>
         @include('layouts.safe-transfer')
