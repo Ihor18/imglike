@@ -101,6 +101,11 @@
 </div>
 @include("layouts.footer")
 
+<script>
+    var currentLang = '{{$currentLang}}'=== '' ? 'ru' : 'en'
+</script>
+
+<script src="{{asset('js/localization.js')}}"></script>
 <script src="{{mix('js/app.js')}}"></script>
 <script src="{{asset('js/vendor/modernizr-3.8.0.min.js')}}"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"

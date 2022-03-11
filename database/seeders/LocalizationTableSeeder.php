@@ -162,10 +162,8 @@ class LocalizationTableSeeder extends Seeder
         ]);
         Localization::updateOrCreate([
             'origin' => 'compress_capt',
-            'en' => 'Compress JPG, PNG, SVG or GIF with the best quality and compression.
-        Reduce the file size of your images at the same time.',
-            'ru' => ' Сжать JPG, PNG, SVG или GIF с самым лучшим качеством и сжатием.
-        Уменьшить размер файла с вашими изображениями одновременно.',
+            'en' => 'Compress JPG, PNG, SVG or GIF with the best quality and compression. Reduce the file size of your images at the same time.',
+            'ru' => ' Сжать JPG, PNG, SVG или GIF с самым лучшим качеством и сжатием. Уменьшить размер файла с вашими изображениями одновременно.',
         ]);
         Localization::updateOrCreate([
             'origin' => 'upload',

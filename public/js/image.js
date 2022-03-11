@@ -47,14 +47,13 @@ async function handleDrop(e) {
         let files = await dt.files;
         refresh(files);
     } catch (err) {
-        alert('Попробуйте снова')
+        alert(localize['handleDropError'][currentLang])
         location.reload()
     }
 }
 
 function handleFiles(files) {
     files = [...files]
-
     files.forEach((file) => {
         fileLs[file.name.split('.')[0]] = file
 
@@ -111,47 +110,55 @@ function previewFile(file) {
 
 
 function refresh(files) {
-    loaderPlay()
 
+    console.log(typeof location.pathname.substr(1))
     switch (location.pathname.substr(1)) {
+        case 'en/resize':
         case 'resize':
-            createBtn("resizeImage()", 'tool-button', "../img/icon-resize.svg", "Изменить размер")
+            createBtn("resizeImage()", 'tool-button', "../img/icon-resize.svg", localize['changeSize'][currentLang])
             createUploadField()
             handleFiles(files)
             break;
-        case 'compress':
+        case 'en/compress':
+        case 'compress' :
+            console.log(1)
             compress()
             createUploadField()
             handleFiles(files)
             break;
+        case 'en/rotate':
         case 'rotate':
             rotate();
             createUploadField()
             handleFiles(files)
             break;
+        case 'en/crop':
         case 'crop':
             cropImageType = files[0].type
             enableCrop()
             previewImage(files)
             break;
-        case 'watermark':
+        case 'en/watermark':
+        case 'watermark' :
             carousel(files)
             break;
+        case 'en/convert-in-jpg':
         case 'convert-in-jpg':
-            createBtn("convertToJpeg()", 'tool-button', "../img/icon-convert.svg", "Конвертировать в JPG")
+            createBtn("convertToJpeg()", 'tool-button', "../img/icon-convert.svg", localize['convert'][currentLang] + ' ' + localize['in'][currentLang] + ' ' + "JPG")
             createUploadField()
             handleFiles(files)
             break;
-        case 'convert-from-jpg':
-            createBtn("convertFromJpeg()", 'tool-button', "../img/icon-convert.svg", "Конвертировать из JPG")
+        case 'en/convert-from-jpg':
+        case 'convert-from-jpg' :
+            createBtn("convertFromJpeg()", 'tool-button', "../img/icon-convert.svg", localize['convert'][currentLang] + ' ' + localize['from'][currentLang] + ' ' + "JPG")
             createUploadField()
             handleFiles(files)
             break;
+        case 'en/meme-generator':
         case 'meme-generator':
             meme(files[0])
-            document.getElementsByClassName('capt')[0].innerHTML =
-                "Все изображения будут изменены с заданными параметрами.";
-            createBtn("convertCanvasToImage()", 'tool-button', "../img/icon-mem.svg", "Сгенерировать мем", false)
+            document.getElementsByClassName('capt')[0].innerHTML = localize['convert_from_capt'][currentLang];
+            createBtn("convertCanvasToImage()", 'tool-button', "../img/icon-mem.svg", localize['generate_meme'][currentLang], false)
             break;
     }
 
@@ -202,9 +209,9 @@ function previewImage(files) {
 
 
 function compress() {
-    document.getElementsByClassName('capt')[0].innerHTML = "Все изображения будут сжаты с наилучшим соотношением качества и размера.";
+    document.getElementsByClassName('capt')[0].innerHTML = localize['changed_capt'][currentLang];
 
-    createBtn("sendRequest()", 'tool-button', "../img/vector-icon.svg", "Сжать изображение")
+    createBtn("sendRequest()", 'tool-button', "../img/vector-icon.svg", localize['compress'][currentLang]+' '+localize['image'][currentLang])
 }
 
 
@@ -268,7 +275,7 @@ function sendRequest() {
         let newSize = (resp['new-size'] / 1000000).toFixed(2)
         let compressResult = Math.round(100 - (newSize / oldSize * 100))
         if (oldSize / newSize > 1) {
-            elem.innerHTML = "Размер вашего файла уменьшен на " + compressResult + "%<br>" + oldSize + "MB > " +
+            elem.innerHTML = localize['reduce_by'][currentLang]+" " + compressResult + "%<br>" + oldSize + "MB > " +
                 newSize + "MB"
         }
         $('.container')[1].appendChild(elem)
@@ -276,9 +283,8 @@ function sendRequest() {
         delete resp['new-size']
         afterSend()
     }
-    let text = 'Сжать JPG, PNG, SVG или GIF с самым лучшим качеством и сжатием. Уменьшить размер файла с вашими ' +
-        'изображениями одновременно.'
-    let failMessage = "Файл не содержит указанное розширение"
+    let text = localize['compress_capt'][currentLang]
+    let failMessage = localize['extension_error'][currentLang]
     sendData(url, formData, callback, text, failMessage)
 }
 
@@ -342,8 +348,8 @@ function resizeImage() {
     pop_up.classList.remove('active')
     pop_up.style.display = 'none'
 
-    let text = 'Все изображения будут изменены с заданными параметрами.'
-    let failMessage = "Файл не содержит указанное розширение"
+    let text = localize['convert_from_capt'][currentLang]
+    let failMessage =  localize['extension_error'][currentLang]
 
     sendData('resize-image', formData, afterSend, text, failMessage)
 
@@ -389,7 +395,7 @@ async function sendData(url, formData, callback, text, failMessage) {
 }
 
 function rotate() {
-    createBtn("rotateImage()", 'tool-button', "../img/icon-rotate.svg", "Повернуть")
+    createBtn("rotateImage()", 'tool-button', "../img/icon-rotate.svg", localize['rotate'][currentLang])
     document.body.getElementsByClassName('btn-settings')[0].classList.remove('disabled')
 }
 
@@ -510,8 +516,8 @@ function htmlToImage() {
     }
 
     callback = function () {
-        document.getElementsByClassName('capt')[0].innerHTML = "Все изображения будут изменены с заданными параметрами..";
-        createBtn("convertHtml()", 'tool-button', "../img/icon-html.svg", "Конвертировать HTML")
+        document.getElementsByClassName('capt')[0].innerHTML = localize['convert_from_capt'][currentLang];
+        createBtn("convertHtml()", 'tool-button', "../img/icon-html.svg", localize['convert'][currentLang]+" HTML")
         let main = document.createElement('div')
         main.className = 'wrap-content'
         let block = document.createElement('div')
@@ -526,7 +532,7 @@ function htmlToImage() {
         $('.wrp-settings')[0].style.display = 'block'
     }
 
-    sendData(url, formData, callback, 'Преобразовывайте веб-страницы в JPG или SVG и сохраняйте визуальный аспект.', 'Введите правильный url')
+    sendData(url, formData, callback, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang]+' url')
 
 }
 
@@ -552,7 +558,7 @@ function convertHtml() {
         formData.append(key, value);
     }
 
-    sendData(url, formData, load, 'Преобразовывайте веб-страницы в JPG или SVG и сохраняйте визуальный аспект.', 'Введите правильный url')
+    sendData(url, formData, load, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang]+' url')
 }
 
 function enterURL(value) {
@@ -620,7 +626,7 @@ function carousel(files) {
         $('.watermark-area')[0].style.display = 'block'
         let hint = document.createElement('div')
         hint.className = 'hint'
-        hint.innerHTML = 'Водяной знак будет применен к этим изображениям'
+        hint.innerHTML = localize['watermark_apply'][currentLang]
         $('.slider')[0].insertBefore(hint, preview[0])
 
         setTimeout(function () {
@@ -735,9 +741,9 @@ function convertFromJpeg() {
     for (const [key, value] of Object.entries(data)) {
         formData.append(key, value);
     }
-    let text = 'Все изображения будут изменены с заданными параметрами.'
-    let failMessage = "Некоректно введеные данные"
-    sendData(url, formData,afterSend,text,failMessage)
+    let text = localize['convert_web_pages'][currentLang]
+    let failMessage = localize['incorrect_data1'][currentLang]
+    sendData(url, formData, afterSend, text, failMessage)
 
     $('.wrp-settings')[0].classList.remove('active')
     $('.btn-settings')[0].style.display = 'none';
@@ -821,7 +827,6 @@ function createInput() {
     $('.wrp-settings')[0].classList.remove('active')
     let textArea = document.createElement('div')
     textArea.className = 'canvasInput'
-    //textArea.placeholder = "Напишите свой текст здесь"
     textArea.style.width = canvas.clientWidth + 'px'
     textArea.style.height = canvas.clientHeight + 'px'
 
@@ -854,7 +859,7 @@ function createInput() {
 
     setTimeout(function () {
         $('h1.ck-placeholder').css('display', 'none')
-        $('p.ck-placeholder').attr('data-placeholder', 'Напишите свой текст здесь')
+        $('p.ck-placeholder').attr('data-placeholder', localize['write_text'][currentLang])
     }, 0.1)
 }
 
