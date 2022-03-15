@@ -6,7 +6,6 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
-use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class ResizeImageService
 {

@@ -4,7 +4,7 @@
 
 @section('header-title',__('localization.impose').' '.__('localization.watermark'))
 @section('header-capt')
-    <div class="capt">{{__('localization.download_rotated')}}</div>
+    <div class="capt">{{__('localization.crop_desk')}}</div>
     <button class="tool-button" onclick="watermarkConvert()" style="display: none"><img
             src="{{asset('img/icon-watermark.svg')}}"><span>{{__('localization.put_up_sign')}}</span></button>
 @endsection
@@ -136,23 +136,23 @@
                                 <div class="custom-select">
                                     <select id="position_mark">
                                         <option data-valign="top" data-align="left" value="top-left">{{__('localization.position')}}:</option>
-                                        <option data-valign="top" data-align="left" value="top-left">{{__('localization.top_left')}}:
+                                        <option data-valign="top" data-align="left" value="top-left">{{__('localization.top_left')}}
                                         </option>
-                                        <option data-valign="top" data-align="center" value="top">{{__('localization.top_center')}}:
+                                        <option data-valign="top" data-align="center" value="top">{{__('localization.top_center')}}
                                         </option>
-                                        <option data-valign="top" data-align="right" value="top-right">{{__('localization.top_right')}}:
+                                        <option data-valign="top" data-align="right" value="top-right">{{__('localization.top_right')}}
                                         </option>
-                                        <option data-valign="middle" data-align="left" value="left">{{__('localization.left_center')}}:
+                                        <option data-valign="middle" data-align="left" value="left">{{__('localization.left_center')}}
                                         </option>
-                                        <option data-valign="middle" data-align="center" value="center">{{__('localization.centered')}}:
+                                        <option data-valign="middle" data-align="center" value="center">{{__('localization.centered')}}
                                         </option>
-                                        <option data-valign="middle" data-align="right" value="right">{{__('localization.right_center')}}:
+                                        <option data-valign="middle" data-align="right" value="right">{{__('localization.right_center')}}
                                         </option>
-                                        <option data-valign="bottom" data-align="left" value="bottom-left">{{__('localization.bottom_left')}}:
+                                        <option data-valign="bottom" data-align="left" value="bottom-left">{{__('localization.bottom_left')}}
                                         </option>
-                                        <option data-valign="bottom" data-align="center" value="bottom">{{__('localization.bottom_center')}}:
+                                        <option data-valign="bottom" data-align="center" value="bottom">{{__('localization.bottom_center')}}
                                         </option>
-                                        <option data-valign="bottom" data-align="right" value="bottom-right">{{__('localization.bottom_right')}}:
+                                        <option data-valign="bottom" data-align="right" value="bottom-right">{{__('localization.bottom_right')}}
                                         </option>
                                     </select>
                                 </div>
@@ -188,7 +188,7 @@
                 </div>
             </div>
         </div>
-        @include('layouts.download-image',['btnTitle'=>__('download_image')])
+        @include('layouts.download-image',['btnTitle'=>__('localization.download_images')])
     </div>
 
 

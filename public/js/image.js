@@ -55,7 +55,7 @@ async function handleDrop(e) {
 function handleFiles(files) {
     files = [...files]
     files.forEach((file) => {
-        fileLs[file.name.split('.')[0]] = file
+        fileLs[file.name] = file
 
     })
     // fileLs = files
@@ -111,7 +111,8 @@ function previewFile(file) {
 
 function refresh(files) {
 
-    console.log(typeof location.pathname.substr(1))
+    $('.upload-buttons')[0].style.display = 'none'
+    $('.safe-transfer')[0].style.display = 'none'
     switch (location.pathname.substr(1)) {
         case 'en/resize':
         case 'resize':
@@ -168,7 +169,7 @@ function previewImage(files) {
 
     files = [...files]
     files.forEach((file) => {
-        fileLs[file.name.split('.')[0]] = file
+        fileLs[file.name] = file
     })
 
     let file = files[0]
@@ -586,7 +587,7 @@ function carousel(files) {
     let slider = $('.slider')[0]
 
     files.forEach((file) => {
-        fileLs[file.name.split('.')[0]] = file
+        fileLs[file.name] = file
         iteration++;
         let reader = new FileReader()
         reader.readAsDataURL(file)
@@ -602,7 +603,7 @@ function carousel(files) {
     })
 
     let keys = Object.keys(fileLs)
-
+    console.log(keys)
     slider.className += ' cust_active'
     $('.wrp-settings')[0].style.display = 'block'
     setTimeout(function () {

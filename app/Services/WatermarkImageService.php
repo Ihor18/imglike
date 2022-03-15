@@ -6,7 +6,8 @@ use Intervention\Image\Facades\Image;
 
 class WatermarkImageService
 {
-    public static function watermark($request){
+    public static function watermark($request)
+    {
         $readyImages = [];
 
         foreach ($request['files'] as $file) {
@@ -14,11 +15,10 @@ class WatermarkImageService
             $img = Image::make($file);
             if (isset($request['text'])) {
                 $img->text($request['text'], $request['position_x'], $request['position_y'], function ($font) use ($request) {
-                    $font->file('fonts/arial.ttf');
-                    $font->color([0, 0, 0]);
+                    $font->file(storage_path('app/Roboto-Regular.ttf'));
+                    $font->size($request['font-size']);
                     $font->align($request['position_align']);
                     $font->valign($request['position_valign']);
-                    $font->size($request['font-size']);
                     $font->angle($request['angle']);
                 });
             } else {
