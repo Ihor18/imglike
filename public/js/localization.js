@@ -75,6 +75,10 @@ var localize = {
     'write_text': {
         'ru': 'Напишите свой текст здесь',
         'en': 'Write your text here'
+    },
+    'not_empty_field':{
+        'ru':'Поля не должны быть пустыми',
+        'en':'Fields must not be empty'
     }
 }
 

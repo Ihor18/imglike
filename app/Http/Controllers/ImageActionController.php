@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\HTMLImageRequest;
 use App\Http\Requests\ImageRequest;
+use App\Http\Requests\WatermarkRequest;
 use App\Services\CompressImageService;
 use App\Services\ConvertJpegImage;
 use App\Services\HTMLImageService;
@@ -42,7 +43,7 @@ class ImageActionController extends Controller
         return response()->json($response);
     }
 
-    public function watermark(ImageRequest $request)
+    public function watermark(WatermarkRequest $request)
     {
         $readyImages = WatermarkImageService::watermark($request->all());
         return response()->json($readyImages);

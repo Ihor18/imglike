@@ -382,9 +382,11 @@ async function sendData(url, formData, callback, text, failMessage) {
             if (resp.hasOwnProperty('errors') && resp.errors.file) {
                 renewUploadPlace(text)
                 alert(failMessage)
-
             } else if (resp.hasOwnProperty('errors') && resp.errors.url) {
                 renewHTML(text)
+                alert(failMessage)
+            } else if (resp.hasOwnProperty('errors') && resp.errors.field) {
+                loaderStop()
                 alert(failMessage)
             } else {
                 $('.safe-transfer')[0].style.display = "none"
@@ -676,14 +678,15 @@ function watermarkConvert() {
     for (const [key, value] of Object.entries(data)) {
         formData.append(key, value);
     }
-
+    let text1 = localize['convert_from_capt'][currentLang]
+    let failMessage = localize['not_empty_field'][currentLang]
     sendData(url, formData, function () {
         $('.wrap-content')[0].style.display = "none"
         $('.wrap-content')[1].style.display = "block"
         $('.tool-button')[0].style.display = "none"
         $('.btn-settings')[0].style.display = "none"
         $('.wrp-settings')[0].classList.remove('active')
-    })
+    },text1,failMessage)
 }
 
 
@@ -865,6 +868,7 @@ function createInput() {
 }
 
 function renewUploadPlace(caption) {
+    loaderStop()
     fileLs = [];
     rotateLs = [];
     let block = $('.wrap-content')
@@ -876,7 +880,6 @@ function renewUploadPlace(caption) {
     $('.capt')[0].innerHTML = caption
     $('.tool-button')[0].remove()
     document.querySelector('input[type=file]').value = ''
-    loaderStop()
 }
 
 function renewHTML(caption) {
