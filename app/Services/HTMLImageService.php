@@ -13,7 +13,7 @@ class HTMLImageService
         $width = $request['width'];
         $height = $request['height'];
 
-        $screen = Browsershot::url($request['url'])->setNodeModulePath('/usr/lib/node_modules')
+        $screen = Browsershot::url($request['url'])->setNodeModulePath(base_path('node_modules'))
             ->setOption('viewport', ['width' => intval($width), 'height' => intval($height)]);
         !empty($request['add-block']) && $screen->disableJavascript();
         !empty($request['pop-up']) && $screen->dismissDialogs();
