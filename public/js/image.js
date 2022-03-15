@@ -154,6 +154,8 @@ function refresh(files) {
             createBtn("convertFromJpeg()", 'tool-button', "../img/icon-convert.svg", localize['convert'][currentLang] + ' ' + localize['from'][currentLang] + ' ' + "JPG")
             createUploadField()
             handleFiles(files)
+            if(fileLs.length<2)
+                $('input[name="item-2"]')[1].disabled = 'true'
             break;
         case 'en/meme-generator':
         case 'meme-generator':
@@ -746,7 +748,7 @@ function convertFromJpeg() {
         formData.append(key, value);
     }
     let text = localize['convert_web_pages'][currentLang]
-    let failMessage = localize['incorrect_data1'][currentLang]
+    let failMessage = localize['incorrect_data'][currentLang]
     sendData(url, formData, afterSend, text, failMessage)
 
     $('.wrp-settings')[0].classList.remove('active')

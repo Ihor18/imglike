@@ -15,7 +15,7 @@ class WatermarkImageService
             $img = Image::make($file);
             if (isset($request['text'])) {
                 $img->text($request['text'], $request['position_x'], $request['position_y'], function ($font) use ($request) {
-                    $font->file(storage_path('app/Roboto-Regular.ttf'));
+                    $font->file(public_path('fonts/Roboto-Regular.ttf'));
                     $font->size($request['font-size']);
                     $font->align($request['position_align']);
                     $font->valign($request['position_valign']);

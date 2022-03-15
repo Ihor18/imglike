@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title',,__('localization.convert').' '.__('localization.in').' '."JPG")
+@section('title',__('localization.convert').' '.__('localization.in').' '."JPG")
 @section('meta_description',"")
 
 @section('header-title',__('localization.convert').' '.__('localization.in').' '."JPG")
