@@ -32,19 +32,19 @@
     </div>
 
 
-    <div class="wrp-settings " style="display: none">
+    <div class="wrp-settings " style="display: none;height: 330px;top: 60%">
         <div class="btn-settings"></div>
         <!-- rotate -->
         <div class="settings"  >
             <div class="capt">{{__('localization.rotation_options')}}</div>
             <div class="tabs rotate">
-                <div class="tab-radiobox flex nowrap">
-                    <div class="item active" data-tab="tab-all"><div class="icon"></div>{{__('localization.all')}}</div>
-                    <div class="item" data-tab="tab-portret"><div class="icon"></div>{{__('localization.portrait')}}</div>
-                    <div class="item" data-tab="tab-album"><div class="icon"></div>{{__('localization.album')}}</div>
-                </div>
-                <div class="tab-content current tab-all">
-                    <p>{{__('localization.rotate')}}:</p>
+{{--                <div class="tab-radiobox flex nowrap">--}}
+{{--                    <div class="item active" data-tab="tab-all"><div class="icon"></div>{{__('localization.all')}}</div>--}}
+{{--                    <div class="item" data-tab="tab-portret"><div class="icon"></div>{{__('localization.portrait')}}</div>--}}
+{{--                    <div class="item" data-tab="tab-album"><div class="icon"></div>{{__('localization.album')}}</div>--}}
+{{--                </div>--}}
+                <div class="tab-content current tab-all" >
+{{--                    <p>{{__('localization.rotate')}}:</p>--}}
                     <div class="flex jcsb">
                         <div class="right" onclick="rotateDeg(90)"><div class="icon"></div>{{__('localization.right')}}</div>
                         <div class="left" onclick="rotateDeg(-90)"><div class="icon"></div>{{__('localization.left')}}</div>

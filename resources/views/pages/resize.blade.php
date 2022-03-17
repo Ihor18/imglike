@@ -61,6 +61,7 @@
                         <input type="checkbox" name="not-scale">
                         <span class="checkmark"></span>
                     </label>
+                    <span id="inc-error"></span>
                 </div>
                 <div class="tab-content tab-percent">
                     <label class="wrp-select wrp-radiobox">{{__('localization.reduce_by')}} 25%

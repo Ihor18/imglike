@@ -8,12 +8,12 @@ let canvas;
 let ctx;
 
 
-let dropArea = document.getElementsByClassName('upload-place')[0]
-if (dropArea) {
+const dropArea = document.getElementsByClassName("upload-place")[0]
+if(dropArea){
     ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, preventDefaults, false)
+        document.body.addEventListener(eventName, preventDefaults, false)
     })
-
     ;['dragenter', 'dragover'].forEach(eventName => {
         dropArea.addEventListener(eventName, highlight, false)
     })
@@ -21,13 +21,14 @@ if (dropArea) {
         dropArea.addEventListener(eventName, unhighlight, false)
     })
     dropArea.addEventListener('drop', handleDrop, false)
-
 }
-
+function preventDefaults (e) {
+    e.preventDefault()
+    e.stopPropagation()
+}
 function highlight(e) {
     dropArea.classList.add('highlight')
 }
-
 function unhighlight(e) {
     dropArea.classList.remove('highlight')
 }
@@ -36,10 +37,6 @@ function mobileBtnClick() {
     document.getElementById('file_input_id').click()
 }
 
-function preventDefaults(e) {
-    e.preventDefault()
-    e.stopPropagation()
-}
 
 async function handleDrop(e) {
     try {
@@ -52,22 +49,63 @@ async function handleDrop(e) {
     }
 }
 
-function handleFiles(files) {
+function handleDrop(e) {
+    const files = e.dataTransfer.files
+    if(files.length){
+        const input = document.getElementById('file_input_id');
+        if(input.hasAttribute('multiple')){
+            const dt = new DataTransfer();
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (validate(file.name)){
+                    dt.items.add(file);
+                }
+            }
+            input.files = dt.files;
+            console.log(input.files)
+            $('#file_input_id').trigger('change');
+        }else if(files.length === 1){
+            if(validate(files[0].name)){
+                input.files = files;
+                $('#file_input_id').trigger('change');
+            }
+        }else{
+            alert("Sorry, but you can only upload one file to this tool.");
+        }
+    }
+}
+
+function validate(sFileName) {
+    const validator = $('#file').attr('accept');
+    if(validator){
+        const validFileExtensions = validator.split(',');
+        if (sFileName.length > 0) {
+            for (let j = 0; j < validFileExtensions.length; j++) {
+                const sCurExtension = validFileExtensions[j];
+                if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() !== sCurExtension.toLowerCase()) {
+                    alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + validFileExtensions.join(", "));
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+function handleFiles(files, isResize = false) {
     files = [...files]
     files.forEach((file) => {
         fileLs[file.name] = file
-
     })
-    // fileLs = files
-    files.forEach(previewFile)
+    files.forEach(file => previewFile(file, isResize))
     loaderStop()
 }
 
-function previewFile(file) {
+function previewFile(file, isResize = false) {
 
     let reader = new FileReader()
     reader.readAsDataURL(file)
-    let fileName = file.name.split('.')[0]
+    let fileName = file.name
     reader.onloadend = function () {
         let cart = document.createElement('div')
         cart.className = 'cart-image'
@@ -105,6 +143,14 @@ function previewFile(file) {
         blockName.textContent = fileName
         cart.appendChild(blockName)
 
+        if (isResize) {
+            img.onload = function () {
+                let newBlock = document.createElement('span')
+                newBlock.className = 'file-size'
+                newBlock.textContent = img.naturalWidth + 'x' + img.naturalHeight
+                cart.insertBefore(newBlock,blockName)
+            }
+        }
     }
 }
 
@@ -118,7 +164,7 @@ function refresh(files) {
         case 'resize':
             createBtn("resizeImage()", 'tool-button', "../img/icon-resize.svg", localize['changeSize'][currentLang])
             createUploadField()
-            handleFiles(files)
+            handleFiles(files, true)
             break;
         case 'en/compress':
         case 'compress' :
@@ -154,7 +200,7 @@ function refresh(files) {
             createBtn("convertFromJpeg()", 'tool-button', "../img/icon-convert.svg", localize['convert'][currentLang] + ' ' + localize['from'][currentLang] + ' ' + "JPG")
             createUploadField()
             handleFiles(files)
-            if(fileLs.length<2)
+            if (fileLs.length < 2)
                 $('input[name="item-2"]')[1].disabled = 'true'
             break;
         case 'en/meme-generator':
@@ -179,7 +225,7 @@ function previewImage(files) {
     let reader = new FileReader()
     reader.readAsDataURL(file)
 
-    let fileName = file.name.split('.')[0]
+    let fileName = file.name
 
 
     reader.onloadend = function () {
@@ -214,7 +260,7 @@ function previewImage(files) {
 function compress() {
     document.getElementsByClassName('capt')[0].innerHTML = localize['changed_capt'][currentLang];
 
-    createBtn("sendRequest()", 'tool-button', "../img/vector-icon.svg", localize['compress'][currentLang]+' '+localize['image'][currentLang])
+    createBtn("sendRequest()", 'tool-button', "../img/vector-icon.svg", localize['compress'][currentLang] + ' ' + localize['image'][currentLang])
 }
 
 
@@ -253,9 +299,24 @@ function rotateImg(key) {
 }
 
 function deleteImg(key) {
+
     delete fileLs[key]
+    console.log(key)
     let cart = document.getElementById(key)
     cart.remove()
+
+    if (Object.keys(fileLs).length === 0) {
+        let block = $('.wrap-content')
+        block[1].style.display = "block"
+        block[0].remove()
+        fileLs = [];
+        rotateLs = [];
+
+        $('.btn-settings')[0].style.display = 'block'
+        $('.content').addClass('white')
+        $('.tool-button')[0].remove()
+        document.querySelector('input[type=file]').value = ''
+    }
 }
 
 function sendRequest() {
@@ -278,7 +339,7 @@ function sendRequest() {
         let newSize = (resp['new-size'] / 1000000).toFixed(2)
         let compressResult = Math.round(100 - (newSize / oldSize * 100))
         if (oldSize / newSize > 1) {
-            elem.innerHTML = localize['reduce_by'][currentLang]+" " + compressResult + "%<br>" + oldSize + "MB > " +
+            elem.innerHTML = localize['reduce_by'][currentLang] + " " + compressResult + "%<br>" + oldSize + "MB > " +
                 newSize + "MB"
         }
         $('.container')[1].appendChild(elem)
@@ -332,6 +393,8 @@ function resizeImage() {
     let isPixel = document.querySelector('[data-tab = "tab-pixel"]').classList.contains("active")
     let csrf = document.querySelector('meta[name="csrf-token"]').content;
     let formData = new FormData()
+    let width
+    let height
     formData.append('_token', csrf);
 
     for (let key in fileLs) {
@@ -343,18 +406,40 @@ function resizeImage() {
     }
 
     if (isPixel) {
-        formData.append('widthPx', document.querySelector('[name = "widthPx"]').value)
-        formData.append('heightPx', document.querySelector('[name = "heightPx"]').value)
+        width = document.querySelector('[name = "widthPx"]').value
+        height = document.querySelector('[name = "heightPx"]').value
+
+        formData.append('widthPx', width)
+        formData.append('heightPx', height)
     } else {
         formData.append('reduce', document.querySelector('input[name="item-2"]:checked').value)
+
     }
-    pop_up.classList.remove('active')
-    pop_up.style.display = 'none'
 
     let text = localize['convert_from_capt'][currentLang]
-    let failMessage =  localize['extension_error'][currentLang]
+    let failMessage = localize['extension_error'][currentLang]
 
-    sendData('resize-image', formData, afterSend, text, failMessage)
+    let isSend = true
+    if (isPixel && $('input[name="not-scale"]')[0].checked) {
+        let block = $('.wrp-img')
+        for(let i=0;i<Object.keys(fileLs).length;i++){
+            let img_width = block[i].lastChild.naturalWidth
+            let img_heigth = block[i].lastChild.naturalHeight
+            if(width>img_width || height>img_heigth){
+                isSend = false
+                $('#inc-error')[0].innerHTML = '*'+localize['img_size'][currentLang]+' <div class="file-name">'+Object.keys(fileLs)[i]+
+                    '</div> '+localize['less_than_size'][currentLang]
+                break;
+            }
+        }
+    }
+
+    if(isSend){
+        pop_up.classList.remove('active')
+        pop_up.style.display = 'none'
+        sendData('resize-image', formData, afterSend, text, failMessage)
+    }
+
 
     loaderStop()
 }
@@ -450,12 +535,13 @@ function rotateDeg(degree) {
 }
 
 function reset() {
-    let carts = document.getElementsByClassName("cart-image")
+    let carts = document.getElementsByClassName("wrp-img")
 
     rotateLs = []
+
     for (let item of carts) {
-        let node = item.firstChild
-        node.lastChild.style.transform = null
+        let node = item.lastChild
+        node.style.transform = null
     }
 }
 
@@ -522,7 +608,7 @@ function htmlToImage() {
 
     callback = function () {
         document.getElementsByClassName('capt')[0].innerHTML = localize['convert_from_capt'][currentLang];
-        createBtn("convertHtml()", 'tool-button', "../img/icon-html.svg", localize['convert'][currentLang]+" HTML")
+        createBtn("convertHtml()", 'tool-button', "../img/icon-html.svg", localize['convert'][currentLang] + " HTML")
         let main = document.createElement('div')
         main.className = 'wrap-content'
         let block = document.createElement('div')
@@ -537,7 +623,7 @@ function htmlToImage() {
         $('.wrp-settings')[0].style.display = 'block'
     }
 
-    sendData(url, formData, callback, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang]+' url')
+    sendData(url, formData, callback, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang] + ' url')
 
 }
 
@@ -563,7 +649,7 @@ function convertHtml() {
         formData.append(key, value);
     }
 
-    sendData(url, formData, load, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang]+' url')
+    sendData(url, formData, load, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang] + ' url')
 }
 
 function enterURL(value) {
@@ -584,6 +670,7 @@ function clearField(selector, value) {
 function carousel(files) {
 
     $('.upload-place')[0].style.display = 'none'
+    $('.upload-mobile').css('display','none')
     $('.content').removeClass('white')
     files = [...files]
 
@@ -607,7 +694,6 @@ function carousel(files) {
     })
 
     let keys = Object.keys(fileLs)
-    console.log(keys)
     slider.className += ' cust_active'
     $('.wrp-settings')[0].style.display = 'block'
     setTimeout(function () {
@@ -665,11 +751,24 @@ function watermarkConvert() {
 
     file.files.length > 0 ? data['watermark_file'] = file.files[0] : ''
 
-    data['position_mark'] = $('#position_mark').val()
-    data['position_align'] = option.data('align')
-    data['position_valign'] = option.data('valign')
-    data['position_x'] = $('[name="x-value"]').val()
-    data['position_y'] = $('[name="y-value"]').val()
+
+    if($('input[name="item-2"]:checked').data('type')=='position'){
+        data['position_mark'] = $('#position_mark').val()
+        data['position_align'] = option.data('align')
+        data['position_valign'] = option.data('valign')
+    }else {
+        data['position_mark'] = 'top-left'
+        data['position_align'] = 'left'
+        data['position_valign'] = 'top'
+        data['position_x'] = $('[name="x-value"]').val()
+        data['position_y'] = $('[name="y-value"]').val()
+    }
+    let color = hexToRgb($('input[name="color"]').val())
+    let opacity = parseFloat(1 - Number('0.'+$('input[name="opacity"]').val()).toFixed(1))
+    console.log(opacity)
+    data['color'] = JSON.stringify([color.r,color.g,color.b,opacity])
+
+
 
     let formData = new FormData()
     let csrf = document.querySelector('meta[name="csrf-token"]').content;
@@ -688,7 +787,7 @@ function watermarkConvert() {
         $('.tool-button')[0].style.display = "none"
         $('.btn-settings')[0].style.display = "none"
         $('.wrp-settings')[0].classList.remove('active')
-    },text1,failMessage)
+    }, text1, failMessage)
 }
 
 
@@ -697,10 +796,13 @@ function showWatermarkOptions(isText) {
         $('#text-input').css('display', 'block')
         $('#font-size').css('display', 'flex')
         $('#angle').css('display', 'flex')
+        $('#color').css('display', 'flex')
+        $('#opacity').css('display', 'flex')
     }
     $('#watermark-options').css('display', 'block')
     $('.tool-button').css('display', 'block')
     $('.btn-grey').css('display', 'none')
+    $('.capt').css('display', 'none')
     $('.bottom-btn').css('display', 'flex')
 }
 
@@ -767,6 +869,7 @@ function meme_preview(src) {
     $('.content').removeClass('white')
     $('.wrp-settings')[0].style.display = 'block'
     $('.upload-place')[0].style.display = 'none'
+    $('.upload-mobile').css('display','none')
     $('.upload-buttons')[0].style.display = 'none'
     $('.safe-transfer')[0].style.display = 'none'
     let buttons = $('.btns')[0];
@@ -896,4 +999,22 @@ function renewHTML(caption) {
     block[0].style.display = 'block'
     block.hasOwnProperty(1) && block[1].remove()
     loaderStop()
+}
+
+function watermarkSettings(obj){
+    if (obj.dataset.type==='position'){
+        $('#position_w').css('display','block')
+        $('#coordinates_w').css('display','none')
+    }else{
+        $('#position_w').css('display','none')
+        $('#coordinates_w').css('display','block')
+    }
+}
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
 }

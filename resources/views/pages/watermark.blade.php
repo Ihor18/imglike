@@ -112,7 +112,7 @@
         </div>
         @include('layouts.safe-transfer')
 
-        <div class="wrp-settings" style="display: none">
+        <div class="wrp-settings" style="display: none;height: 560px">
             <div class="btn-settings"></div>
             <!-- watermark -->
             <div class="settings">
@@ -131,7 +131,17 @@
                             </div>
                         </li>
                         <li>
-                            <p>{{__('localization.position')}}:</p>
+                            <p style="margin: 10px 0;font-size:16px;color: black">{{__('localization.indentation')}}:</p>
+                            <label class="wrp-select wrp-radiobox">{{__('localization.by_pos')}}
+                                <input type="radio" data-type="position" name="item-2" onchange="watermarkSettings(this)" checked="checked">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="wrp-select wrp-radiobox">{{__('localization.by_coordinates')}}
+                                <input type="radio" data-type="coordinates" onchange="watermarkSettings(this)" name="item-2">
+                                <span class="checkmark"></span>
+                            </label>
+                        </li>
+                        <li id="position_w">
                             <div class="input-field">
                                 <div class="custom-select">
                                     <select id="position_mark">
@@ -159,7 +169,8 @@
                             </div>
                         </li>
                         <li>
-                            <div><p style="margin: 10px 0;font-size:16px;color: black">Отступ от края:</p>
+                            <div>
+                                <div id="coordinates_w" style="display: none">
                                 <div class="row flex aic jcsb">
                                     <p>{{__('localization.position')}}: X</p>
                                     <input type="number" name="x-value" value="10">
@@ -168,13 +179,22 @@
                                     <p>{{__('localization.position')}}: Y</p>
                                     <input type="number" name="y-value" value="10">
                                 </div>
+                                </div>
                                 <div class="row flex aic jcsb" id="font-size" style="display: none">
                                     <p>{{__('localization.font_size')}}:</p>
                                     <input type="number" name="font-size" value="24">
                                 </div>
                                 <div class="row flex aic jcsb" id="angle" style="display: none">
-                                    <p>{{__('localization.turn')}}:°</p>
+                                    <p>{{__('localization.turn')}}°:</p>
                                     <input type="number" name="angle" value="0">
+                                </div>
+                                <div class="row flex aic jcsb" id="color" style="display: none">
+                                    <p>{{__('localization.color')}}:</p>
+                                    <input type="color" name="color" value="#000000">
+                                </div>
+                                <div class="row flex aic jcsb" id="opacity" style="display: none">
+                                    <p>{{__('localization.opacity')}}:</p>
+                                    <input min="0" max="9" type="range" value="5" name="opacity" >
                                 </div>
                             </div>
                         </li>

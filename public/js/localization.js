@@ -79,6 +79,15 @@ var localize = {
     'not_empty_field':{
         'ru':'Поля не должны быть пустыми',
         'en':'Fields must not be empty'
+    },
+    'img_size':{
+        'ru':'Размер изображения',
+        'en':'Image size'
+    },
+    'less_than_size':{
+        'ru':'меньший размера указанного в полях',
+        'en':'less than the size indicated in the fields'
     }
+
 }
 

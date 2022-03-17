@@ -25,8 +25,8 @@ class WatermarkRequest extends FormRequest
             'files.*' =>'required|mimes:jpg,png,gif,bmp,webp,svg',
             'text' => 'required_without:watermark_file',
             'watermark_file'=> 'required_without:text',
-            'position_x' => 'required|numeric',
-            'position_y' => 'required|numeric'
+            'position_x' => 'numeric',
+            'position_y' => 'numeric'
         ];
     }
 

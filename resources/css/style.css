@@ -2978,3 +2978,16 @@ input[type=number] {
     height: 394px;
     margin-left: -1px;
 }
+
+.file-size{
+    margin: 0!important;
+    font-size: 13px!important;
+}
+.file-name{
+    color: black;
+    font-size: 13px;
+}
+#inc-error{
+   color: red;
+   font-size: 13px;
+}

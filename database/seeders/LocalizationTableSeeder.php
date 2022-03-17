@@ -223,9 +223,9 @@ class LocalizationTableSeeder extends Seeder
         ]);
         Localization::updateOrCreate([
             'origin' => 'convert_formats',
-            'en' => 'Convert PNG, GIF, TIF, PSD, SVG, WEBP, HEIC or RAW to JPG formats. Convert immediately
+            'en' => 'Convert  PNG, GIF, TIF, SVG, WEBP formats to JPG. Convert immediately
         several images in JPG online.',
-            'ru' => 'Преобразовывайте форматы PNG, GIF, TIF, PSD, SVG, WEBP, HEIC или RAW to JPG. Конвертируйте сразу
+            'ru' => 'Преобразовывайте форматы PNG, GIF, TIF, SVG, WEBP в JPG. Конвертируйте сразу
         несколько изображений в JPG онлайн.',
         ]);
         Localization::updateOrCreate([
@@ -516,379 +516,35 @@ class LocalizationTableSeeder extends Seeder
             'ru' => 'Поворот',
         ]);
         Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
+            'origin' => 'color',
+            'en' => 'Color',
+            'ru' => 'Цвет',
         ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);        Localization::updateOrCreate([
-        'origin' => '',
-        'en' => '',
-        'ru' => '',
-    ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);        Localization::updateOrCreate([
-        'origin' => '',
-        'en' => '',
-        'ru' => '',
-    ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);        Localization::updateOrCreate([
-        'origin' => '',
-        'en' => '',
-        'ru' => '',
-    ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);        Localization::updateOrCreate([
-        'origin' => '',
-        'en' => '',
-        'ru' => '',
-    ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);        Localization::updateOrCreate([
-        'origin' => '',
-        'en' => '',
-        'ru' => '',
-    ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);        Localization::updateOrCreate([
-        'origin' => '',
-        'en' => '',
-        'ru' => '',
-    ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
-        Localization::updateOrCreate([
-            'origin' => '',
-            'en' => '',
-            'ru' => '',
-        ]);
+
         Localization::updateOrCreate([
             'origin' => 'in_pixels',
             'en' => 'In pixels',
             'ru' => 'В пикселях',
         ]);
-
+        Localization::updateOrCreate([
+            'origin' => 'indentation',
+            'en' => 'Indentation from the edge',
+            'ru' => ' Отступ от края',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => 'by_pos',
+            'en' => 'By position',
+            'ru' => 'По положению',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => 'by_coordinates',
+            'en' => 'By coordinates',
+            'ru' => ' По координатах',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => 'opacity',
+            'en' => 'Opacity',
+            'ru' => 'Прозрачность',
+        ]);
     }
 }
