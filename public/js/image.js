@@ -37,18 +37,6 @@ function mobileBtnClick() {
     document.getElementById('file_input_id').click()
 }
 
-
-async function handleDrop(e) {
-    try {
-        let dt = await e.dataTransfer
-        let files = await dt.files;
-        refresh(files);
-    } catch (err) {
-        alert(localize['handleDropError'][currentLang])
-        location.reload()
-    }
-}
-
 function handleDrop(e) {
     const files = e.dataTransfer.files
     if(files.length){
