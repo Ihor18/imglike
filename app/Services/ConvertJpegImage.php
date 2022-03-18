@@ -10,10 +10,13 @@ class ConvertJpegImage
     {
         $readyImages = [];
         foreach ($request['files'] as $file) {
-
-            $img = Image::make($file)->encode('jpg');
-            $readyImages[explode('.', $file->getClientOriginalName())[0] . '.' . 'jpeg'] = base64_encode($img);
+            $path = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.jpg';
+            Image::make($file)->encode('jpg')->save(storage_path('app/public/'.$path));
+            $files[] = $path;
         }
+        ZipArchiveService::makeZipFromPath($files,$request['time']);
+        $readyImages['converted.zip'] = base64_encode(file_get_contents(storage_path('app/public/'.$request['time'].'.zip')));
+        unlink(storage_path('app/public/'.$request['time'].'.zip'));
         return $readyImages;
     }
 
@@ -22,14 +25,16 @@ class ConvertJpegImage
         $readyImages = [];
         if ($request['format'] == 'png') {
             foreach ($request['files'] as $file) {
-                $img = Image::make($file)->encode('png');
-                $readyImages[explode('.', $file->getClientOriginalName())[0] . '.' . $request['format']] = base64_encode($img);
+                $path = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.png';
+                $img = Image::make($file)->encode('png')->save(storage_path('app/public/'.$path));
+                $files[] = $path;
             }
         } else {
             if ($request['type'] == 'static') {
                 foreach ($request['files'] as $file) {
-                    $img = Image::make($file)->encode('gif');
-                    $readyImages[explode('.', $file->getClientOriginalName())[0] . '.' . $request['format']] = base64_encode($img);
+                    $path = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.gif';
+                    $img = Image::make($file)->encode('gif')->save(storage_path('app/public/'.$path));
+                    $files[] = $path;
                 }
             } else {
                 if ($request['save_prop']) {
@@ -44,18 +49,24 @@ class ConvertJpegImage
                         }
                     }
                     foreach ($request['files'] as $file) {
-                        Image::make($file)->resize($width, $height)->save($file->getPathname());
+                        $path = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.png';
+                        Image::make($file)->resize($width, $height)->save(storage_path('app/public/'.$path));
+                        $files[] = $path;
                     }
                 }
                 foreach ($request['files'] as $file) {
                     $frames[] = $file->getPathname();
                 }
+                    $path = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.gif';
                     $anim = new AnimatedGIF();
                     $anim->create($frames, array($request['duration'] * 100));
-                    $readyImages['result.gif'] = base64_encode($anim->get());
-
+                    $anim->save(storage_path('app/public/'.$path));
+                    $files[] = $path;
             }
         }
+        ZipArchiveService::makeZipFromPath($files,$request['time']);
+        $readyImages['converted.zip'] = base64_encode(file_get_contents(storage_path('app/public/'.$request['time'].'.zip')));
+        unlink(storage_path('app/public/'.$request['time'].'.zip'));
         return $readyImages;
     }
 }

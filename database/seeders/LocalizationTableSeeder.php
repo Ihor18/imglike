@@ -223,9 +223,9 @@ class LocalizationTableSeeder extends Seeder
         ]);
         Localization::updateOrCreate([
             'origin' => 'convert_formats',
-            'en' => 'Convert  PNG, GIF, TIF, SVG, WEBP formats to JPG. Convert immediately
+            'en' => 'Convert  PNG, GIF, TIF, SVG, WEBP, PSD formats to JPG. Convert immediately
         several images in JPG online.',
-            'ru' => 'Преобразовывайте форматы PNG, GIF, TIF, SVG, WEBP в JPG. Конвертируйте сразу
+            'ru' => 'Преобразовывайте форматы PNG, GIF, TIF, SVG, WEBP, PSD  в JPG. Конвертируйте сразу
         несколько изображений в JPG онлайн.',
         ]);
         Localization::updateOrCreate([

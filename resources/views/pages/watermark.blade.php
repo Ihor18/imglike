@@ -94,8 +94,8 @@
                         <img src="{{asset('img/open-folder.svg')}}">
                         <span> {{__('localization.drag')}} <label for="file_input_id"><a>{{__('localization.image')}}</a></label></span>
                         <p>{{__('localization.or')}} <label for="file_input_id" class="upload-link" >{{__('localization.upload')}}</label>
-                            <input type="file" id="file_input_id" name="file" accept="image/*"
-                                   onchange="refresh(this.files)" multiple> {{__('localization.upload_text')}}</p>
+                            <input type="file" id="file_input_id" name="file"  accept=".jpg,.jpeg,.png,.bmp,.gif,.svg"
+                                   onchange="refresh(this.files)" multiple > {{__('localization.upload_text')}}</p>
                         <input style="display: none" type="file" id="watermark_file" name="watermark_file"
                                accept=".jpg,.jpeg,.png,.bmp,.gif,.svg">
                     </form>

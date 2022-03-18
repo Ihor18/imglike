@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 
-
 class CompressImageService
 {
 
@@ -42,9 +41,12 @@ class CompressImageService
                 $optimizerChain = OptimizerChainFactory::create();
                 $optimizerChain->optimize($file->getPathname());
                 $readyImages['new-size'] += filesize($file);
-                $readyImages[$file->getClientOriginalName()] = base64_encode(file_get_contents($file->getPathname()));
+
             }
         }
+        ZipArchiveService::makeZip($request['files'],$request['time']);
+        $readyImages['compressed.zip'] = base64_encode(file_get_contents(storage_path('app/public/'.$request['time'].'.zip')));
+        unlink(storage_path('app/public/'.$request['time'].'.zip'));
         return $readyImages;
     }
 

@@ -6,10 +6,10 @@ let cropImageType;
 let format;
 let canvas;
 let ctx;
-
+let time = Date.now();
 
 const dropArea = document.getElementsByClassName("upload-place")[0]
-if(dropArea){
+if (dropArea) {
     ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, preventDefaults, false)
         document.body.addEventListener(eventName, preventDefaults, false)
@@ -22,13 +22,16 @@ if(dropArea){
     })
     dropArea.addEventListener('drop', handleDrop, false)
 }
-function preventDefaults (e) {
+
+function preventDefaults(e) {
     e.preventDefault()
     e.stopPropagation()
 }
+
 function highlight(e) {
     dropArea.classList.add('highlight')
 }
+
 function unhighlight(e) {
     dropArea.classList.remove('highlight')
 }
@@ -37,44 +40,39 @@ function mobileBtnClick() {
     document.getElementById('file_input_id').click()
 }
 
-function handleDrop(e) {
-    const files = e.dataTransfer.files
-    if(files.length){
+async function handleDrop(e) {
+    const files = await e.dataTransfer.files
+    if (files.length) {
         const input = document.getElementById('file_input_id');
-        if(input.hasAttribute('multiple')){
+        if (input.hasAttribute('multiple')) {
             const dt = new DataTransfer();
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                if (validate(file.name)){
+                if (validate(file.name)) {
                     dt.items.add(file);
                 }
             }
             input.files = dt.files;
             console.log(input.files)
             $('#file_input_id').trigger('change');
-        }else if(files.length === 1){
-            if(validate(files[0].name)){
+        } else if (files.length === 1) {
+            if (validate(files[0].name)) {
                 input.files = files;
                 $('#file_input_id').trigger('change');
             }
-        }else{
+        } else {
             alert("Sorry, but you can only upload one file to this tool.");
         }
     }
 }
 
 function validate(sFileName) {
-    const validator = $('#file').attr('accept');
-    if(validator){
+    const validator = $('#file_input_id').attr('accept');
+    if (validator) {
         const validFileExtensions = validator.split(',');
-        if (sFileName.length > 0) {
-            for (let j = 0; j < validFileExtensions.length; j++) {
-                const sCurExtension = validFileExtensions[j];
-                if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() !== sCurExtension.toLowerCase()) {
-                    alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + validFileExtensions.join(", "));
-                    return false;
-                }
-            }
+        if (!validFileExtensions.includes('.' + sFileName.split('.')[1])) {
+            alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + validFileExtensions.join(", "));
+            return false;
         }
     }
     return true;
@@ -85,7 +83,12 @@ function handleFiles(files, isResize = false) {
     files.forEach((file) => {
         fileLs[file.name] = file
     })
-    files.forEach(file => previewFile(file, isResize))
+
+    if (files.length > 0) {
+        files.forEach(file => previewFile(file, isResize))
+    }else {
+        uploadRefresh()
+    }
     loaderStop()
 }
 
@@ -136,7 +139,7 @@ function previewFile(file, isResize = false) {
                 let newBlock = document.createElement('span')
                 newBlock.className = 'file-size'
                 newBlock.textContent = img.naturalWidth + 'x' + img.naturalHeight
-                cart.insertBefore(newBlock,blockName)
+                cart.insertBefore(newBlock, blockName)
             }
         }
     }
@@ -294,17 +297,21 @@ function deleteImg(key) {
     cart.remove()
 
     if (Object.keys(fileLs).length === 0) {
-        let block = $('.wrap-content')
-        block[1].style.display = "block"
-        block[0].remove()
-        fileLs = [];
-        rotateLs = [];
-
-        $('.btn-settings')[0].style.display = 'block'
-        $('.content').addClass('white')
-        $('.tool-button')[0].remove()
-        document.querySelector('input[type=file]').value = ''
+        uploadRefresh()
     }
+}
+
+function uploadRefresh() {
+    let block = $('.wrap-content')
+    block[1].style.display = "block"
+    block[0].remove()
+    fileLs = [];
+    rotateLs = [];
+
+    $('.btn-settings')[0].style.display = 'block'
+    $('.content').addClass('white')
+    $('.tool-button')[0].remove()
+    document.querySelector('input[type=file]').value = ''
 }
 
 function sendRequest() {
@@ -344,7 +351,12 @@ function load() {
     loaderPlay()
     for (img in resp) {
         var a = document.createElement('a');
-        a.href = 'data:image/' + img.split('.')[img.split('.').length - 1] + ';base64,' + resp[img];
+        let data_type = 'image'
+        console.log(img.split('.')[img.split('.').length - 1])
+        if(img.split('.')[img.split('.').length - 1]==='zip'){
+            data_type = 'application'
+        }
+        a.href = 'data:'+data_type+'/' + img.split('.')[img.split('.').length - 1] + ';base64,' + resp[img];
         a.download = img;
         document.body.appendChild(a);
         a.click();
@@ -410,19 +422,19 @@ function resizeImage() {
     let isSend = true
     if (isPixel && $('input[name="not-scale"]')[0].checked) {
         let block = $('.wrp-img')
-        for(let i=0;i<Object.keys(fileLs).length;i++){
+        for (let i = 0; i < Object.keys(fileLs).length; i++) {
             let img_width = block[i].lastChild.naturalWidth
             let img_heigth = block[i].lastChild.naturalHeight
-            if(width>img_width || height>img_heigth){
+            if (width > img_width || height > img_heigth) {
                 isSend = false
-                $('#inc-error')[0].innerHTML = '*'+localize['img_size'][currentLang]+' <div class="file-name">'+Object.keys(fileLs)[i]+
-                    '</div> '+localize['less_than_size'][currentLang]
+                $('#inc-error')[0].innerHTML = '*' + localize['img_size'][currentLang] + ' <div class="file-name">' + Object.keys(fileLs)[i] +
+                    '</div> ' + localize['less_than_size'][currentLang]
                 break;
             }
         }
     }
 
-    if(isSend){
+    if (isSend) {
         pop_up.classList.remove('active')
         pop_up.style.display = 'none'
         sendData('resize-image', formData, afterSend, text, failMessage)
@@ -448,6 +460,7 @@ function trackInput(val) {
 
 async function sendData(url, formData, callback, text, failMessage) {
     loaderPlay()
+    formData.append('time',time)
     await fetch(url, {
         method: 'POST',
         body: formData
@@ -658,10 +671,10 @@ function clearField(selector, value) {
 function carousel(files) {
 
     $('.upload-place')[0].style.display = 'none'
-    $('.upload-mobile').css('display','none')
+    $('.upload-mobile').css('display', 'none')
     $('.content').removeClass('white')
     files = [...files]
-
+    console.log(files.length)
     let iteration = 0;
     let slider = $('.slider')[0]
 
@@ -740,11 +753,11 @@ function watermarkConvert() {
     file.files.length > 0 ? data['watermark_file'] = file.files[0] : ''
 
 
-    if($('input[name="item-2"]:checked').data('type')=='position'){
+    if ($('input[name="item-2"]:checked').data('type') == 'position') {
         data['position_mark'] = $('#position_mark').val()
         data['position_align'] = option.data('align')
         data['position_valign'] = option.data('valign')
-    }else {
+    } else {
         data['position_mark'] = 'top-left'
         data['position_align'] = 'left'
         data['position_valign'] = 'top'
@@ -752,10 +765,9 @@ function watermarkConvert() {
         data['position_y'] = $('[name="y-value"]').val()
     }
     let color = hexToRgb($('input[name="color"]').val())
-    let opacity = parseFloat(1 - Number('0.'+$('input[name="opacity"]').val()).toFixed(1))
+    let opacity = parseFloat(1 - Number('0.' + $('input[name="opacity"]').val()).toFixed(1))
     console.log(opacity)
-    data['color'] = JSON.stringify([color.r,color.g,color.b,opacity])
-
+    data['color'] = JSON.stringify([color.r, color.g, color.b, opacity])
 
 
     let formData = new FormData()
@@ -857,7 +869,7 @@ function meme_preview(src) {
     $('.content').removeClass('white')
     $('.wrp-settings')[0].style.display = 'block'
     $('.upload-place')[0].style.display = 'none'
-    $('.upload-mobile').css('display','none')
+    $('.upload-mobile').css('display', 'none')
     $('.upload-buttons')[0].style.display = 'none'
     $('.safe-transfer')[0].style.display = 'none'
     let buttons = $('.btns')[0];
@@ -989,15 +1001,16 @@ function renewHTML(caption) {
     loaderStop()
 }
 
-function watermarkSettings(obj){
-    if (obj.dataset.type==='position'){
-        $('#position_w').css('display','block')
-        $('#coordinates_w').css('display','none')
-    }else{
-        $('#position_w').css('display','none')
-        $('#coordinates_w').css('display','block')
+function watermarkSettings(obj) {
+    if (obj.dataset.type === 'position') {
+        $('#position_w').css('display', 'block')
+        $('#coordinates_w').css('display', 'none')
+    } else {
+        $('#position_w').css('display', 'none')
+        $('#coordinates_w').css('display', 'block')
     }
 }
+
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {

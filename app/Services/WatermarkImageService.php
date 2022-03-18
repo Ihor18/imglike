@@ -11,7 +11,7 @@ class WatermarkImageService
         $readyImages = [];
 
         foreach ($request['files'] as $file) {
-
+            $path = $file->getClientOriginalName();
             $img = Image::make($file);
 
             $width = $img->width();
@@ -52,9 +52,12 @@ class WatermarkImageService
             } else {
                 $img->insert($request['watermark_file'], $request['position_mark'],$x, $y);
             }
-            $img->encode();
-            $readyImages[$file->getClientOriginalName()] = base64_encode($img);
+            $img->save(storage_path('app/public/'.$path));
+            $files[] = $path;
         }
+        ZipArchiveService::makeZipFromPath($files, $request['time']);
+        $readyImages['watermark.zip'] = base64_encode(file_get_contents(storage_path('app/public/' . $request['time'] . '.zip')));
+        unlink(storage_path('app/public/' . $request['time'] . '.zip'));
         return $readyImages;
     }
 
