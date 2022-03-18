@@ -53,7 +53,6 @@ async function handleDrop(e) {
                 }
             }
             input.files = dt.files;
-            console.log(input.files)
             $('#file_input_id').trigger('change');
         } else if (files.length === 1) {
             if (validate(files[0].name)) {
@@ -97,6 +96,7 @@ function previewFile(file, isResize = false) {
     let reader = new FileReader()
     reader.readAsDataURL(file)
     let fileName = file.name
+    let format = fileName.split('.')[1]
     reader.onloadend = function () {
         let cart = document.createElement('div')
         cart.className = 'cart-image'
@@ -124,7 +124,13 @@ function previewFile(file, isResize = false) {
         wrpImg.appendChild(deleteBtn)
 
         let img = document.createElement('img')
-        img.src = reader.result
+        if(format==='psd'){
+            img.src = './img/psd.png'
+        }else if(format==='tiff'){
+            img.src = './img/TIFF.png'
+        }else{
+            img.src = reader.result
+        }
         wrpImg.appendChild(img)
 
         imageBlock.appendChild(wrpImg)
@@ -159,7 +165,6 @@ function refresh(files) {
             break;
         case 'en/compress':
         case 'compress' :
-            console.log(1)
             compress()
             createUploadField()
             handleFiles(files)
@@ -219,7 +224,9 @@ function previewImage(files) {
     let fileName = file.name
 
 
+
     reader.onloadend = function () {
+        console.log(format)
         var elm = document.createElement('div');
         elm.className = 'wrap-content';
         document.getElementsByClassName('content')[0].classList.remove("white")
@@ -227,7 +234,9 @@ function previewImage(files) {
         cart.className = 'crop-area'
         cart.setAttribute('id', fileName)
         var img = document.createElement('img')
-        img.src = reader.result
+            img.src = reader.result
+
+
         img.id = "image"
         cart.appendChild(img)
         elm.appendChild(cart)
@@ -292,7 +301,6 @@ function rotateImg(key) {
 function deleteImg(key) {
 
     delete fileLs[key]
-    console.log(key)
     let cart = document.getElementById(key)
     cart.remove()
 
@@ -352,7 +360,6 @@ function load() {
     for (img in resp) {
         var a = document.createElement('a');
         let data_type = 'image'
-        console.log(img.split('.')[img.split('.').length - 1])
         if(img.split('.')[img.split('.').length - 1]==='zip'){
             data_type = 'application'
         }
@@ -674,7 +681,6 @@ function carousel(files) {
     $('.upload-mobile').css('display', 'none')
     $('.content').removeClass('white')
     files = [...files]
-    console.log(files.length)
     let iteration = 0;
     let slider = $('.slider')[0]
 
@@ -766,7 +772,6 @@ function watermarkConvert() {
     }
     let color = hexToRgb($('input[name="color"]').val())
     let opacity = parseFloat(1 - Number('0.' + $('input[name="opacity"]').val()).toFixed(1))
-    console.log(opacity)
     data['color'] = JSON.stringify([color.r, color.g, color.b, opacity])
 
 

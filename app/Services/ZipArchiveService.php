@@ -26,6 +26,7 @@ class ZipArchiveService
             }
             $zip->close();
             foreach ($files as $file) {
+                if(file_exists(storage_path('app/public/'.$file)))
                 unlink(storage_path('app/public/'.$file));
             }
         }
