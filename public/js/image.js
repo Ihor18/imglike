@@ -196,7 +196,7 @@ function refresh(files) {
             createBtn("convertFromJpeg()", 'tool-button', "../img/icon-convert.svg", localize['convert'][currentLang] + ' ' + localize['from'][currentLang] + ' ' + "JPG")
             createUploadField()
             handleFiles(files)
-            if (fileLs.length < 2)
+            if (Object.keys(fileLs).length  < 2)
                 $('input[name="item-2"]')[1].disabled = 'true'
             break;
         case 'en/meme-generator':

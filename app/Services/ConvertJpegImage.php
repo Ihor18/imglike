@@ -49,9 +49,7 @@ class ConvertJpegImage
                         }
                     }
                     foreach ($request['files'] as $file) {
-                        $path = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.png';
-                        Image::make($file)->resize($width, $height)->save(storage_path('app/public/'.$path));
-                        $files[] = $path;
+                        Image::make($file)->resize($width, $height)->save($file->getPathname());
                     }
                 }
                 foreach ($request['files'] as $file) {
