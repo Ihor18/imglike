@@ -19,7 +19,7 @@
                         <span> {{__('localization.drag')}} <label for="file_input_id"><a>{{__('localization.image')}}</a></label></span>
                         <p>{{__('localization.or')}} <label for="file_input_id" class="upload-link" >{{__('localization.upload')}}</label>
                             <input type="file" id="file_input_id" name="file" multiple
-                                   accept=".jpg,.jpeg,.png,.bmp,.gif,.svg"
+                                   accept=".jpg,.jpeg,.png,.bmp,.gif,.svg,.psd,.tiff,.webp"
                                    onchange="refresh(this.files)"> {{__('localization.upload_text')}}</p>
                     </form>
                 </div>
