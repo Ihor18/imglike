@@ -13,11 +13,19 @@
         </a>
         <ul class="right-menu flex aic">
             <li class="lang">
-                <a href="" class="flex aic"><i class="fal fa-globe-americas"></i><p>Русский</p><i class="fal fa-angle-down"></i>
-                    <i class="fal fa-angle-up"></i></a>
+                <a href="" class="flex aic">
+                    <i class="fal fa-globe-americas"></i>
+                    <p>{{App\Models\Localization::getLangTitle(app()->getLocale())}}</p>
+                    <i class="fal fa-angle-down"></i>
+                    <i class="fal fa-angle-up"></i>
+                </a>
                 <div class="dropdown">
                     <ul class="flex jcsb">
-                        <li><a href="">English</a></li>
+                        @foreach($arrayLang as $lang)
+                            @if(in_array($lang,$arrayApproveLang))
+                                <li><a href="{{getUrl($lang)}}">{{App\Models\Localization::getLangTitle($lang)}}</a></li>
+                            @endif
+                        @endforeach
                     </ul>
                 </div>
             </li>
