@@ -44,7 +44,7 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: puzzle
+      MYSQL_DATABASE: photo-edit
       MYSQL_ROOT_PASSWORD: 33850504
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
