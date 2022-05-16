@@ -12,6 +12,7 @@ class ResizeImageService
     public function resize(Request $request)
     {
         $readyImages = [];
+        $process = 1;
         foreach ($request->file('files') as $file) {
             $key =  $file->getClientOriginalName();
             $img = Image::make($file);
@@ -26,21 +27,24 @@ class ResizeImageService
             } else {
 
                 if (isset($request->widthPx)) {
-                    $img->resize($request->widthPx, $request->heightPx)->save(storage_path('app/public/' . $path));
+                    $img->resize($request->widthPx, $request->heightPx)->save(storage_path('app/public/' . $path),100);
                 } else {
                     $reduce = 1 - $request->reduce;
-                    $img->resize($img->getWidth() * $reduce, $img->getHeight() * $reduce)->save(storage_path('app/public/' . $path));
+                    $img->resize($img->getWidth() * $reduce, $img->getHeight() * $reduce)->save(storage_path('app/public/' . $path),100);
                 }
 
                 if (isset($request['rotates'][$key])) {
-                    $img->rotate($request['rotates'][$key])->save(storage_path('app/public/' . $path));
+                    $img->rotate($request['rotates'][$key])->save(storage_path('app/public/' . $path),100);
                 }
                 $files[] = $path;
             }
+            ProccessbarService::writeToFile($request->cookieName,$process);
+            $process++;
         }
         ZipArchiveService::makeZipFromPath($files, $request['time']);
         $readyImages['resized.zip'] = base64_encode(file_get_contents(storage_path('app/public/' . $request['time'] . '.zip')));
         unlink(storage_path('app/public/' . $request['time'] . '.zip'));
+        ProccessbarService::writeToFile($request->cookieName,$process);
         return $readyImages;
     }
 
