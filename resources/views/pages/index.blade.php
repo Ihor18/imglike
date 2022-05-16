@@ -12,7 +12,7 @@
     <div class="content white">
         <div class="container">
 
-            <ul class="list-apps wrap-content flex jcsb">
+            <ul class="list-apps wrap-content flex jcsb padding-wrap">
                 <li>
                     <a href="{{route('compress')}}">
                         <div class="icon">
