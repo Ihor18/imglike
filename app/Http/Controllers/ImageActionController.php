@@ -8,8 +8,11 @@ use App\Http\Requests\WatermarkRequest;
 use App\Services\CompressImageService;
 use App\Services\ConvertJpegImage;
 use App\Services\HTMLImageService;
+use App\Services\ProccessbarService;
 use App\Services\ResizeImageService;
 use App\Services\WatermarkImageService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 
@@ -59,5 +62,20 @@ class ImageActionController extends Controller
     {
         $readyImages = ConvertJpegImage::fromJpeg($request->all());
         return response()->json($readyImages);
+    }
+
+    public function getProgress(Request $request)
+    {
+        $progress = ProccessbarService::getFromFile($request->id);
+        Log::info($request->id);
+        if($request->maxNumber == $progress){
+            ProccessbarService::removeFile($request->id);
+            return response()->json([
+                'action' => 'end'
+            ]);
+        }
+        return response()->json([
+            'action' => 'progress',
+            'progress' => $progress]);
     }
 }

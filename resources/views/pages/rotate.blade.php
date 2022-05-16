@@ -10,14 +10,17 @@
 @section('content')
     <div class="content white">
         <div id="load" class="container">
-            <div class="wrap-content">
+            <div class="wrap-content padding-wrap">
                 <div class="upload-place">
                     <form id="send-image" method="post" action="{{route('compress-image')}}">
                         @csrf
                         <img src="{{asset('img/open-folder.svg')}}">
-                        <span> {{__('localization.drag')}} <label for="file_input_id"><a>{{__('localization.image')}}</a></label></span>
-                        <p>{{__('localization.or')}} <label for="file_input_id" class="upload-link" >{{__('localization.upload')}}</label>
-                            <input type="file" id="file_input_id" name="file" multiple accept=".jpg,.jpeg,.png,.bmp,.gif,.svg,.psd,.tiff,.webp"
+                        <span> {{__('localization.drag')}} <label
+                                for="file_input_id"><a>{{__('localization.image')}}</a></label></span>
+                        <p>{{__('localization.or')}} <label for="file_input_id"
+                                                            class="upload-link">{{__('localization.upload')}}</label>
+                            <input type="file" id="file_input_id" name="file" multiple
+                                   accept=".jpg,.jpeg,.png,.bmp,.gif,.svg,.psd,.tiff,.webp"
                                    onchange="refresh(this.files)"> {{__('localization.upload_text')}}</p>
                     </form>
                 </div>
@@ -31,39 +34,34 @@
         @include('layouts.safe-transfer')
     </div>
 
-
-    <div class="wrp-settings " style="display: none;height: 330px;top: 60%">
-        <div class="btn-settings"></div>
-        <!-- rotate -->
-        <div class="settings"  >
-            <div class="capt">{{__('localization.rotation_options')}}</div>
-            <div class="tabs rotate">
-{{--                <div class="tab-radiobox flex nowrap">--}}
-{{--                    <div class="item active" data-tab="tab-all"><div class="icon"></div>{{__('localization.all')}}</div>--}}
-{{--                    <div class="item" data-tab="tab-portret"><div class="icon"></div>{{__('localization.portrait')}}</div>--}}
-{{--                    <div class="item" data-tab="tab-album"><div class="icon"></div>{{__('localization.album')}}</div>--}}
-{{--                </div>--}}
-                <div class="tab-content current tab-all" >
-{{--                    <p>{{__('localization.rotate')}}:</p>--}}
-                    <div class="flex jcsb">
-                        <div class="right" onclick="rotateDeg(90)"><div class="icon"></div>{{__('localization.right')}}</div>
-                        <div class="left" onclick="rotateDeg(-90)"><div class="icon"></div>{{__('localization.left')}}</div>
+    <div class="sidebar" style="display: none">
+        <div class="collapse">
+            <div class="card active">
+                <div class="card-header no-after pos-rel">
+                    <div><b>{{__('localization.rotation_options')}}</b></div>
+                    <button class="btn-grey discard help-button" onclick="reset()">{{__('localization.reset_all')}}</button>
+                </div>
+                <div class="tabs rotate card-body" style="padding: 0;height: 200px">
+                    <div class="tab-content current tab-all">
+                        <div class="flex jcsb">
+                            <div class="right" onclick="rotateDeg(90)">
+                                <div class="icon"></div>
+                                <p>{{__('localization.right')}}</p></div>
+                            <div class="left" onclick="rotateDeg(-90)">
+                                <div class="icon"></div>
+                                <p>{{__('localization.left')}}</p></div>
+                        </div>
                     </div>
-                    <button class="btn-grey discard" onclick="reset()"><p>{{__('localization.reset_all')}}</p></button>
+
+                    <div class="bottom-btn flex jcc mt-20">
+                        <button class="btn-rotate pos-static" onclick="rotateImage()">
+                            <p>{{__('localization.rotate')}}</p>
+                        </button>
+                    </div>
                 </div>
-                <div class="tab-content tab-portret">
-                </div>
-                <div class="tab-content tab-album">
-                </div>
-            </div>
-            <div class="bottom-btn flex jcc">
-                <button class="btn-rotate" onclick="rotateImage()">
-                    <p>{{__('localization.rotate')}}</p>
-                </button>
             </div>
         </div>
     </div>
-
 
 @endsection
 

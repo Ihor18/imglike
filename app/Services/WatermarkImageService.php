@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
 use Intervention\Image\Facades\Image;
 
 class WatermarkImageService
@@ -21,7 +22,7 @@ class WatermarkImageService
             if (isset($request['position_x'])) {
                 $x = $request['position_x'];
                 $y = $request['position_y'];
-            } else {
+            } else if (isset($request['text'])) {
                 switch ($request['position_align']) {
                     case 'center':
                         $x = $width / 2;
@@ -50,9 +51,10 @@ class WatermarkImageService
                     $font->angle($request['angle']);
                 });
             } else {
-                $img->insert($request['watermark_file'], $request['position_mark'],$x, $y);
+                $watermarkImage = Image::make($request['watermark_file'])->opacity(100 - $request['opacity'])->resize($request['watermark_w'], $request['watermark_h']);
+                $img->insert($watermarkImage, $request['position_mark'], $x, $y);
             }
-            $img->save(storage_path('app/public/'.$path));
+            $img->save(storage_path('app/public/' . $path));
             $files[] = $path;
         }
         ZipArchiveService::makeZipFromPath($files, $request['time']);

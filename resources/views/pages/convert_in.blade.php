@@ -11,7 +11,7 @@
 @section('content')
     <div class="content white">
         <div id="load" class="container">
-            <div class="wrap-content">
+            <div class="wrap-content padding-wrap">
                 <div class="upload-place">
                     <form id="send-image" method="post" action="{{route('compress-image')}}">
                         @csrf
@@ -32,8 +32,23 @@
         @include('layouts.safe-transfer')
     </div>
 
-    <div class="wrp-settings " style="display: none">
-        <div class="btn-settings disabled"></div>
+
+    <div class="sidebar pos-rel" style="display: none">
+        <div class="collapse">
+            <div class="card active">
+                <div class="card-header no-after">
+                    <p>{{__('localization.convert').' '.__('localization.in').' '."JPG"}}</p>
+                </div>
+                <div class="card-body">
+                    <div class="hint mb-65">{{__('localization.to_convert').__('localization.error_hint')}}</div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="bottom-btn flex jcc">
+            <button onclick="convertToJpeg()"><img style="color: red" src="{{asset('img/icon-convert.svg')}}"> {{__('localization.compress').' '.__('localization.image')}}</button>
+        </div>
     </div>
 
 @endsection

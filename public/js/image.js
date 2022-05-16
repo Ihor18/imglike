@@ -7,6 +7,7 @@ let format;
 let canvas;
 let ctx;
 let time = Date.now();
+let filesSize = 0;
 
 const dropArea = document.getElementsByClassName("upload-place")[0]
 if (dropArea) {
@@ -42,6 +43,7 @@ function mobileBtnClick() {
 
 async function handleDrop(e) {
     const files = await e.dataTransfer.files
+    console.log(files.length)
     if (files.length) {
         const input = document.getElementById('file_input_id');
         if (input.hasAttribute('multiple')) {
@@ -81,29 +83,31 @@ function handleFiles(files, isResize = false) {
     files = [...files]
     files.forEach((file) => {
         fileLs[file.name] = file
+        filesSize += file.size
     })
 
     if (files.length > 0) {
-        files.forEach(file => previewFile(file, isResize))
-    }else {
+        files.forEach(file => previewFile(file, isResize, files.length))
+    } else {
         uploadRefresh()
     }
     loaderStop()
 }
 
-function previewFile(file, isResize = false) {
+function previewFile(file, isResize = false, fileCount) {
 
     let reader = new FileReader()
     reader.readAsDataURL(file)
     let fileName = file.name
     let format = fileName.split('.')[1]
+    let workArea = document.getElementsByClassName('work-area')[0]
+
+    let list = document.getElementsByClassName('tool')[0]
     reader.onloadend = function () {
         let cart = document.createElement('div')
-        cart.className = 'cart-image'
+        cart.className = 'page cart-image'
         cart.setAttribute('id', fileName)
-
-        document.getElementsByClassName('list')[0].appendChild(cart)
-
+        workArea.appendChild(cart)
         let imageBlock = document.createElement('div')
         imageBlock.className = 'image'
 
@@ -124,11 +128,11 @@ function previewFile(file, isResize = false) {
         wrpImg.appendChild(deleteBtn)
 
         let img = document.createElement('img')
-        if(format==='psd'){
+        if (format === 'psd') {
             img.src = './img/psd.png'
-        }else if(format==='tiff'){
+        } else if (format === 'tiff') {
             img.src = './img/TIFF.png'
-        }else{
+        } else {
             img.src = reader.result
         }
         wrpImg.appendChild(img)
@@ -146,6 +150,14 @@ function previewFile(file, isResize = false) {
                 newBlock.className = 'file-size'
                 newBlock.textContent = img.naturalWidth + 'x' + img.naturalHeight
                 cart.insertBefore(newBlock, blockName)
+                if (fileCount === 1) {
+                    $('input[name="widthPx"]').val(img.naturalWidth)
+                    $('input[name="heightPx"]').val(img.naturalHeight)
+                    document.querySelector('[name = "widthPx"]').setAttribute('old-val', img.naturalWidth)
+                    document.querySelector('[name = "heightPx"]').setAttribute('old-val', img.naturalHeight)
+                } else {
+                    document.querySelector('input[name="save-prop"]').checked = false
+                }
             }
         }
     }
@@ -159,7 +171,7 @@ function refresh(files) {
     switch (location.pathname.substr(1)) {
         case 'en/resize':
         case 'resize':
-            createBtn("resizeImage()", 'tool-button', "../img/icon-resize.svg", localize['changeSize'][currentLang])
+            resizeView()
             createUploadField()
             handleFiles(files, true)
             break;
@@ -177,6 +189,7 @@ function refresh(files) {
             break;
         case 'en/crop':
         case 'crop':
+            loaderPlay()
             cropImageType = files[0].type
             enableCrop()
             previewImage(files)
@@ -187,29 +200,30 @@ function refresh(files) {
             break;
         case 'en/convert-in-jpg':
         case 'convert-in-jpg':
-            createBtn("convertToJpeg()", 'tool-button', "../img/icon-convert.svg", localize['convert'][currentLang] + ' ' + localize['in'][currentLang] + ' ' + "JPG")
             createUploadField()
             handleFiles(files)
             break;
         case 'en/convert-from-jpg':
         case 'convert-from-jpg' :
-            createBtn("convertFromJpeg()", 'tool-button', "../img/icon-convert.svg", localize['convert'][currentLang] + ' ' + localize['from'][currentLang] + ' ' + "JPG")
             createUploadField()
             handleFiles(files)
-            if (Object.keys(fileLs).length  < 2)
+            if (Object.keys(fileLs).length < 2)
                 $('input[name="item-2"]')[1].disabled = 'true'
             break;
         case 'en/meme-generator':
         case 'meme-generator':
             meme(files[0])
             document.getElementsByClassName('capt')[0].innerHTML = localize['convert_from_capt'][currentLang];
-            createBtn("convertCanvasToImage()", 'tool-button', "../img/icon-mem.svg", localize['generate_meme'][currentLang], false)
             break;
     }
 
 }
 
-function previewImage(files) {
+function resizeView() {
+    document.body.getElementsByClassName('wrap-content')[0].style.display = 'none'
+}
+
+ function previewImage(files) {
 
     files = [...files]
     files.forEach((file) => {
@@ -223,55 +237,66 @@ function previewImage(files) {
 
     let fileName = file.name
 
+    var elm = document.createElement('div');
+    elm.className = 'wrap-content';
+    var innerEl = document.createElement('div');
+    innerEl.className = 'tool flex jcc';
+    let sidebar = document.getElementsByClassName('sidebar')[0]
+    sidebar = sidebar.cloneNode(true)
+    sidebar.style.display = 'block'
+    var workArea = document.createElement('div');
+    workArea.className = 'work-area upload__files'
+    innerEl.appendChild(workArea)
+    innerEl.appendChild(sidebar)
+    elm.appendChild(innerEl)
 
+    document.getElementsByClassName('content')[0].classList.remove("white")
 
-    reader.onloadend = function () {
-        console.log(format)
-        var elm = document.createElement('div');
-        elm.className = 'wrap-content';
-        document.getElementsByClassName('content')[0].classList.remove("white")
-        let cart = document.createElement('div')
-        cart.className = 'crop-area'
-        cart.setAttribute('id', fileName)
+    let cart = document.createElement('div')
+    cart.className = 'crop-area'
+    cart.setAttribute('id', fileName)
+     workArea.appendChild(cart)
+     $('.container')[2].appendChild(elm)
+
+    reader.onloadend =  function () {
+
         var img = document.createElement('img')
-            img.src = reader.result
-
-
+        img.src = reader.result
         img.id = "image"
         cart.appendChild(img)
-        elm.appendChild(cart)
-        $('.container')[2].appendChild(elm)
+
 
         var $image = $("#image")[0]
-
         cropper = new Cropper($image, {
             zoomable: false,
             zoomOnTouch: false,
             zoomOnWheel: false,
             background: false,
-            dragMode: 'move',
-
+            dragMode: 'crop',
+            crop(event) {
+                $('input[name="width"]').val(Math.round(event.detail.width))
+                $('input[name="height"]').val(Math.round(event.detail.height))
+                $('input[name="x"]').val(Math.round(event.detail.x))
+                $('input[name="y"]').val(Math.round(event.detail.y))
+            },
         });
+        loaderStop()
     }
-    loaderStop()
+
 }
 
 
 function compress() {
     document.getElementsByClassName('capt')[0].innerHTML = localize['changed_capt'][currentLang];
-
-    createBtn("sendRequest()", 'tool-button', "../img/vector-icon.svg", localize['compress'][currentLang] + ' ' + localize['image'][currentLang])
 }
 
 
 function enableCrop() {
-    $('.btn-settings')[0].style.display = 'block'
-    $('.tool-button')[0].style.display = 'block'
-    $('.wrap-content').remove()
+    document.getElementsByClassName('wrap-content')[0].remove()
 }
 
 function createUploadField() {
-    $('.wrp-settings')[0].style.display = "block"
+
     var elm = document.createElement('div');
     elm.className = 'wrap-content';
 
@@ -279,7 +304,16 @@ function createUploadField() {
     load.insertBefore(elm, load.firstChild);
 
     var innerEl = document.createElement('div');
-    innerEl.className = 'list flex jcc';
+    innerEl.className = 'tool flex jcc';
+
+    let sidebar = document.getElementsByClassName('sidebar')[0]
+    sidebar = sidebar.cloneNode(true)
+    sidebar.style.display = 'block'
+    var workArea = document.createElement('div');
+    workArea.className = 'work-area upload__files'
+    innerEl.appendChild(workArea)
+    innerEl.appendChild(sidebar)
+    document.getElementsByClassName('wrap-content')[1].style.display = 'none'
     elm.appendChild(innerEl);
 
     document.getElementsByClassName('content')[0].classList.remove("white")
@@ -315,10 +349,10 @@ function uploadRefresh() {
     block[0].remove()
     fileLs = [];
     rotateLs = [];
-
-    $('.btn-settings')[0].style.display = 'block'
     $('.content').addClass('white')
-    $('.tool-button')[0].remove()
+
+    $('.tool-button')[0] !== undefined && $('.tool-button')[0].remove()
+
     document.querySelector('input[type=file]').value = ''
 }
 
@@ -360,10 +394,10 @@ function load() {
     for (img in resp) {
         var a = document.createElement('a');
         let data_type = 'image'
-        if(img.split('.')[img.split('.').length - 1]==='zip'){
+        if (img.split('.')[img.split('.').length - 1] === 'zip') {
             data_type = 'application'
         }
-        a.href = 'data:'+data_type+'/' + img.split('.')[img.split('.').length - 1] + ';base64,' + resp[img];
+        a.href = 'data:' + data_type + '/' + img.split('.')[img.split('.').length - 1] + ';base64,' + resp[img];
         a.download = img;
         document.body.appendChild(a);
         a.click();
@@ -372,38 +406,16 @@ function load() {
     loaderStop()
 }
 
-function createBtn(func, className, src, title, isChange = true) {
-    let container = document.getElementsByClassName('container')[1]
-    let compressBtn = document.createElement('button')
-    compressBtn.type = 'submit'
-    compressBtn.setAttribute("onclick", func)
-    compressBtn.className = className
-
-    if (isChange) {
-        const owl = document.querySelector('div.wrap-content');
-        owl.style.display = 'none'
-    }
-    let btnIcon = document.createElement('img')
-    btnIcon.src = src
-
-    let btnText = document.createElement('span')
-    btnText.textContent = title
-
-    compressBtn.appendChild(btnIcon)
-    compressBtn.appendChild(btnText)
-    container.appendChild(compressBtn)
-}
 
 function resizeImage() {
-    loaderPlay()
-    let pop_up = $('.wrp-settings')[0]
     let isPixel = document.querySelector('[data-tab = "tab-pixel"]').classList.contains("active")
     let csrf = document.querySelector('meta[name="csrf-token"]').content;
     let formData = new FormData()
     let width
     let height
+    let cookieName = randomString()
     formData.append('_token', csrf);
-
+    formData.append('cookieName', cookieName)
     for (let key in fileLs) {
         formData.append('files[]', fileLs[key])
     }
@@ -442,32 +454,79 @@ function resizeImage() {
     }
 
     if (isSend) {
-        pop_up.classList.remove('active')
-        pop_up.style.display = 'none'
-        sendData('resize-image', formData, afterSend, text, failMessage)
+        let isProgress = true;
+        let url = 'resize-image';
+        let maxProccess = Object.keys(fileLs).length + 1
+        formData.append('time', time)
+        fetch(url, {
+            method: 'POST',
+            body: formData
+        }).then(response => response = response.json())
+            .then(data => resp = data).then(() => {
+
+            if (resp.hasOwnProperty('errors') && resp.errors.file) {
+                renewUploadPlace(text)
+                alert(failMessage)
+            } else if (resp.hasOwnProperty('errors') && resp.errors.url) {
+                renewHTML(text)
+                alert(failMessage)
+            } else if (resp.hasOwnProperty('errors') && resp.errors.field) {
+                loaderStop()
+                alert(failMessage)
+            } else {
+                $('.safe-transfer')[0].style.display = "none"
+                isProgress = false;
+                setButtonProgress(100);
+                setTimeout(() => {
+                    $('.wrap-content')[0].style.display = "none"
+                    $('.wrap-content')[2].style.display = "block"
+                }, 300);
+            }
+        })
+        // let iii = 0;
+        // while (iii !== 50) {
+        //     setTimeout(() => {
+        //         fetch('/progress/' + cookieName + '/' + maxProccess, {
+        //             method: 'GET'
+        //         }).then(response => response = response.json())
+        //             .then(data => resp = data).then(() => {
+        //             if (resp.action === 'progress') {
+        //                 setButtonProgress(resp.progress / (maxProccess + 1) * 100)
+        //             }
+        //         })
+        //     }, 200);
+        //     iii++;
+        // }
     }
 
-
-    loaderStop()
 }
 
-function lockInput(val) {
-    document.querySelector('[name = "heightPx"]').disabled = !!val;
-}
+function trackInput(val, isHeight) {
 
-function trackInput(val) {
-
-    checkbox1 = document.querySelector('[name = "save-prop"]').checked
-    checkbox2 = document.querySelector('[name = "not-scale"]').checked
+    let checkbox1 = document.querySelector('[name = "save-prop"]').checked
+    let value
     if (checkbox1) {
-        document.querySelector('[name = "heightPx"]').value = val * document.querySelector('[name = "heightPx"]').value / document.querySelector('[name = "widthPx"]').getAttribute('old-val')
+        if (isHeight) {
+            value = Math.round(val * document.querySelector('[name = "widthPx"]').value / document.querySelector('[name = "heightPx"]').getAttribute('old-val'))
+            document.querySelector('[name = "widthPx"]').value = value
+            document.querySelector('[name = "widthPx"]').setAttribute('old-val', value)
+        } else {
+            value = Math.round(val * document.querySelector('[name = "heightPx"]').value / document.querySelector('[name = "widthPx"]').getAttribute('old-val'))
+            document.querySelector('[name = "heightPx"]').value = value
+            document.querySelector('[name = "heightPx"]').setAttribute('old-val', value)
+        }
     }
-    document.querySelector('[name = "widthPx"]').setAttribute('old-val', val)
+
+    if (isHeight) {
+        document.querySelector('[name = "heightPx"]').setAttribute('old-val', val)
+    } else {
+        document.querySelector('[name = "widthPx"]').setAttribute('old-val', val)
+    }
 }
 
 async function sendData(url, formData, callback, text, failMessage) {
     loaderPlay()
-    formData.append('time',time)
+    formData.append('time', time)
     await fetch(url, {
         method: 'POST',
         body: formData
@@ -493,8 +552,7 @@ async function sendData(url, formData, callback, text, failMessage) {
 }
 
 function rotate() {
-    createBtn("rotateImage()", 'tool-button', "../img/icon-rotate.svg", localize['rotate'][currentLang])
-    document.body.getElementsByClassName('btn-settings')[0].classList.remove('disabled')
+    document.body.getElementsByClassName('wrap-content')[0].style.display = 'none'
 }
 
 function rotateImage() {
@@ -513,8 +571,6 @@ function rotateImage() {
     }
 
     sendData(url, formData)
-    $('.btn-settings')[0].style.display = "none"
-    $('.wrp-settings')[0].classList.remove('active')
     afterSend()
     loaderStop()
 }
@@ -522,7 +578,7 @@ function rotateImage() {
 function afterSend() {
     $('.wrap-content')[0].style.display = "none"
     $('.wrap-content')[2].style.display = "block"
-    $('.tool-button')[0].style.display = "none"
+    $('.tool-button')[0] !== undefined ? $('.tool-button')[0].style.display = "none" : ''
 }
 
 function rotateDeg(degree) {
@@ -530,12 +586,12 @@ function rotateDeg(degree) {
 
     for (let item of carts) {
         let node = item.firstChild
-        if (node.lastChild.style.transform) {
-            let num = parseInt(node.lastChild.style.transform.split('(')[1].split('d')[0]) + degree
-            node.lastChild.style.transform = "rotate(" + num % 360 + "deg)"
+        if (node.lastChild.lastChild.style.transform) {
+            let num = parseInt(node.lastChild.lastChild.style.transform.split('(')[1].split('d')[0]) + degree
+            node.lastChild.lastChild.style.transform = "rotate(" + num % 360 + "deg)"
             rotateLs[item.id] = num
         } else {
-            node.lastChild.style.transform = "rotate(" + degree + "deg)"
+            node.lastChild.lastChild.style.transform = "rotate(" + degree + "deg)"
             rotateLs[item.id] = 90
         }
     }
@@ -553,10 +609,12 @@ function reset() {
     }
 }
 
-function toggle(obj) {
-    if (!obj.classList.contains('disabled')) {
-        $('.wrp-settings').toggleClass('active');
-    }
+function prepareDownloadCrop() {
+    document.getElementsByClassName('wrap-content')[1].style.display = 'none'
+    document.getElementsByClassName('wrap-content')[0].style.display = 'block'
+    let wrap = document.createElement('div')
+    wrap.className = 'wrap-content'
+
 }
 
 function crop() {
@@ -572,7 +630,7 @@ function crop() {
         a.click();
         document.body.removeChild(a);
         loaderStop()
-    }, cropImageType)
+    }, cropImageType, 1)
 }
 
 function changeCropperBox() {
@@ -583,7 +641,7 @@ function changeCropperBox() {
     width = parseInt($("input[name='width']")[0].value)
     height = parseInt($("input[name='height']")[0].value)
 
-    cropper.setCropBoxData({"left": left, "top": top, "width": width, "height": height})
+    cropper.setData({"left": left, "top": top, "width": width, "height": height})
 
 }
 
@@ -596,9 +654,9 @@ function loaderStop() {
 }
 
 function htmlToImage() {
-    format = $('#format').find(":selected")[0].value
-
     let url = '/convert-html'
+
+    format = $('#format').find(":selected")[0].value
     let data = []
 
     data['height'] = 1080
@@ -615,10 +673,19 @@ function htmlToImage() {
     }
 
     callback = function () {
+
+        document.getElementsByClassName('wrap-content')[0].style.display = 'none'
+
         document.getElementsByClassName('capt')[0].innerHTML = localize['convert_from_capt'][currentLang];
-        createBtn("convertHtml()", 'tool-button', "../img/icon-html.svg", localize['convert'][currentLang] + " HTML")
+        let wrapContent = document.createElement('div')
+        wrapContent.className = 'wrap-content'
+        let tool = document.createElement('div')
+        tool.className = 'tool flex jcc'
         let main = document.createElement('div')
-        main.className = 'wrap-content'
+        main.className = 'work-area upload__files p-20'
+        let sidebar = document.getElementsByClassName('sidebar')[0]
+        sidebar.style.display = 'block'
+
         let block = document.createElement('div')
         block.className = 'html-area'
         let image = document.createElement('img')
@@ -627,8 +694,12 @@ function htmlToImage() {
         }
         block.appendChild(image)
         main.appendChild(block)
-        $('.container')[2].appendChild(main)
-        $('.wrp-settings')[0].style.display = 'block'
+        tool.appendChild(main)
+        tool.appendChild(sidebar)
+        wrapContent.appendChild(tool)
+        $('.container')[2].appendChild(wrapContent)
+        $('.content').removeClass('white')
+        $('[name="url"]').attr('old-html',$('[name="url"]')[0].value)
     }
 
     sendData(url, formData, callback, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang] + ' url')
@@ -636,7 +707,7 @@ function htmlToImage() {
 }
 
 function convertHtml() {
-    format = $('#format').find(":selected")[0].value
+    let format = $('#format').find(":selected")[0].value
 
     let url = '/convert-html'
     let sizeSelector = $('#size').find(":selected")[0];
@@ -645,6 +716,7 @@ function convertHtml() {
     data['height'] = sizeSelector.dataset.height
     data['width'] = sizeSelector.dataset.width
     data['format'] = format;
+
     data['url'] = $('[name="url"]')[0].value
     data['add-block'] = $('[name="add-block"]')[0].checked
     data['pop-up'] = $('[name="delete-pop-up"]')[0].checked
@@ -656,8 +728,21 @@ function convertHtml() {
     for (const [key, value] of Object.entries(data)) {
         formData.append(key, value);
     }
+    if ($('input[name="url"]').attr('old-html')==$('input[name="url"]')[1].value){
+        callback = function () {
+            $('.wrap-content')[1].style.display = "none"
+            $('.wrap-content')[2].style.display = "block"
+        }
+    }else{
+        callback = function () {
+            for (img in resp) {
+                $('.html-area img')[0].src = 'data:image/' + img.split('.')[img.split('.').length - 1] + ';base64,' + resp[img];
+            }
+            $('[name="url"]').attr('old-html',$('[name="url"]')[0].value)
+        }
+    }
 
-    sendData(url, formData, load, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang] + ' url')
+    sendData(url, formData, callback, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang] + ' url')
 }
 
 function enterURL(value) {
@@ -683,6 +768,19 @@ function carousel(files) {
     files = [...files]
     let iteration = 0;
     let slider = $('.slider')[0]
+    let block = document.getElementsByClassName('wrap-content')[0]
+
+    let tool = document.createElement('div')
+    tool.className = 'tool flex jcc'
+    let main = document.createElement('div')
+    main.className = 'work-area upload__files p-20'
+    let sidebar = document.getElementsByClassName('sidebar')[0]
+    sidebar.style.display = 'block'
+
+
+    tool.appendChild(main)
+    tool.appendChild(sidebar)
+    block.appendChild(tool)
 
     files.forEach((file) => {
         fileLs[file.name] = file
@@ -702,7 +800,7 @@ function carousel(files) {
 
     let keys = Object.keys(fileLs)
     slider.className += ' cust_active'
-    $('.wrp-settings')[0].style.display = 'block'
+
     setTimeout(function () {
         $('.slider').slick({
             dots: true,
@@ -716,11 +814,11 @@ function carousel(files) {
             }
         })
 
-        $('li[role = "presentation"]').addClass('cart-image')
+        $('li[role = "presentation"]').addClass('cart-image').addClass('page')
 
         let preview = $('.slick-dots')
 
-        preview.addClass('list flex jcc')
+        preview.addClass('tool flex jcc')
         $('.watermark-area')[0].style.display = 'block'
         let hint = document.createElement('div')
         hint.className = 'hint'
@@ -729,10 +827,11 @@ function carousel(files) {
 
         setTimeout(function () {
             let height = $('.slick-active > img')[0].height
-            $('.slide.right')[0].style.top = height / 2 + 'px'
-            $('.slide.left')[0].style.top = height / 2 + 'px'
+            $('.slide.right')[0] ? $('.slide.right')[0].style.top = height / 2 + 'px' : ''
+            $('.slide.left')[0] ? $('.slide.left')[0].style.top = height / 2 + 'px' : ''
             $('.slick-slide').css('height', height)
             $('.watermark-area').append($('.slick-dots')[0])
+            main.appendChild(document.getElementsByClassName('watermark-area')[0])
         }, 10)
         loaderStop()
     }, 40 * iteration)
@@ -740,7 +839,6 @@ function carousel(files) {
 }
 
 function uploadWatermarkPreview() {
-    $('#watermark_file').click()
     showWatermarkOptions(false)
 }
 
@@ -770,9 +868,16 @@ function watermarkConvert() {
         data['position_x'] = $('[name="x-value"]').val()
         data['position_y'] = $('[name="y-value"]').val()
     }
-    let color = hexToRgb($('input[name="color"]').val())
-    let opacity = parseFloat(1 - Number('0.' + $('input[name="opacity"]').val()).toFixed(1))
-    data['color'] = JSON.stringify([color.r, color.g, color.b, opacity])
+
+    if($('#watermark-options').attr('data-action')==='text'){
+        let color = hexToRgb($('input[name="color"]').val())
+        let opacity = parseFloat(1 - Number('0.' + $('input[name="opacity"]').val()).toFixed(1))
+        data['color'] = JSON.stringify([color.r, color.g, color.b, opacity])
+    }else{
+        data['opacity'] = $('input[name="mark_opacity"]').val() * 10
+        data['watermark_w'] = $('input[name="widthPx"]').val()
+        data['watermark_h'] = $('input[name="heightPx"]').val()
+    }
 
 
     let formData = new FormData()
@@ -783,15 +888,15 @@ function watermarkConvert() {
     }
     for (const [key, value] of Object.entries(data)) {
         formData.append(key, value);
+        console.log(key+'--'+value)
     }
     let text1 = localize['convert_from_capt'][currentLang]
     let failMessage = localize['not_empty_field'][currentLang]
     sendData(url, formData, function () {
         $('.wrap-content')[0].style.display = "none"
         $('.wrap-content')[1].style.display = "block"
-        $('.tool-button')[0].style.display = "none"
-        $('.btn-settings')[0].style.display = "none"
-        $('.wrp-settings')[0].classList.remove('active')
+        $('.tool-button')[0] !== undefined ? $('.tool-button')[0].style.display = "none" : ''
+
     }, text1, failMessage)
 }
 
@@ -803,11 +908,14 @@ function showWatermarkOptions(isText) {
         $('#angle').css('display', 'flex')
         $('#color').css('display', 'flex')
         $('#opacity').css('display', 'flex')
+        $('#watermark-options').attr('data-action','text')
+    }else{
+        $('#watermark_image').css('display', 'block')
+        $('#watermark-options').attr('data-action','image')
     }
     $('#watermark-options').css('display', 'block')
-    $('.tool-button').css('display', 'block')
     $('.btn-grey').css('display', 'none')
-    $('.capt').css('display', 'none')
+  //  $('.capt').css('display', 'none')
     $('.bottom-btn').css('display', 'flex')
 }
 
@@ -858,8 +966,7 @@ function convertFromJpeg() {
     let failMessage = localize['incorrect_data'][currentLang]
     sendData(url, formData, afterSend, text, failMessage)
 
-    $('.wrp-settings')[0].classList.remove('active')
-    $('.btn-settings')[0].style.display = 'none';
+
 }
 
 function meme(file) {
@@ -872,21 +979,29 @@ function meme(file) {
 
 function meme_preview(src) {
     $('.content').removeClass('white')
-    $('.wrp-settings')[0].style.display = 'block'
     $('.upload-place')[0].style.display = 'none'
     $('.upload-mobile').css('display', 'none')
     $('.upload-buttons')[0].style.display = 'none'
     $('.safe-transfer')[0].style.display = 'none'
     let buttons = $('.btns')[0];
-
+    let sidebar = document.getElementsByClassName('sidebar')[0]
+    sidebar = sidebar.cloneNode(true)
+    sidebar.style.display = 'block'
     let outerDiv = document.createElement('div')
     outerDiv.className = 'mem-area'
+    let tool = document.createElement('div')
+    tool.className = 'tool flex jcc'
+    let workArea = document.createElement('div')
+    workArea.className = 'work-area upload__files'
+    workArea.append(outerDiv)
+    tool.append(workArea)
+    tool.append(sidebar)
     let innerDiv = document.createElement('div')
     innerDiv.className = 'edit-panel flex jcc'
     innerDiv.append(buttons)
     buttons.style.display = 'flex'
     outerDiv.append(innerDiv)
-    $('.wrap-content')[0].append(outerDiv)
+    $('.wrap-content')[0].append(tool)
     canvas = document.createElement('canvas')
     canvas.id = 'canvas-img'
     ctx = canvas.getContext('2d');
@@ -938,7 +1053,6 @@ function chooseCanvas(id) {
 }
 
 function createInput() {
-    $('.wrp-settings')[0].classList.remove('active')
     let textArea = document.createElement('div')
     textArea.className = 'canvasInput'
     textArea.style.width = canvas.clientWidth + 'px'
@@ -985,22 +1099,18 @@ function renewUploadPlace(caption) {
     block[1].style.display = 'block'
     block[2].style.display = 'none'
     block[0].remove()
-    $('.btn-settings')[0].style.display = 'block'
     $('.content').addClass('white')
     $('.capt')[0].innerHTML = caption
-    $('.tool-button')[0].remove()
+    $('.tool-button')[0] !== undefined && $('.tool-button')[0].remove()
     document.querySelector('input[type=file]').value = ''
 }
 
 function renewHTML(caption) {
     let block = $('.wrap-content')
-    let settings = $('.wrp-settings')
     let htmlBtn = $('.tool-button')
     $("input[name='url']")[0].value = ''
-    settings[0].style.display = 'none'
     $('.capt')[0].innerHTML = caption
     htmlBtn.hasOwnProperty(0) && htmlBtn[0].remove()
-    settings[0].classList.remove('active')
     block[0].style.display = 'block'
     block.hasOwnProperty(1) && block[1].remove()
     loaderStop()
@@ -1023,4 +1133,65 @@ function hexToRgb(hex) {
         g: parseInt(result[2], 16),
         b: parseInt(result[3], 16)
     } : null;
+}
+
+function randomString() {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < 20; i++) {
+        result += characters.charAt(Math.floor(Math.random() *
+            charactersLength));
+    }
+    return result;
+}
+
+function setButtonProgress(percent) {
+    let button = document.querySelector(".btn-resize")
+    button.style.backgroundColor = '#EA1C4F'
+    button.querySelector("p").style.filter = 'brightness(0) invert(1)';
+    button.querySelector(".button__progress").style.width = `${parseInt(percent) + 2}%`;
+}
+
+function changeTab(element) {
+    $('.item').removeClass('active');
+    $('.tab-content').removeClass('current');
+    element.classList.add('active');
+    var tab = element.getAttribute('data-tab');
+    $('.' + tab).addClass('current');
+}
+
+function changeValOnWheel (event) {
+
+    $this = $(this);
+    $inc = parseFloat($this.attr('step'));
+    $max = parseFloat($this.attr('max'));
+    $min = parseFloat($this.attr('min'));
+    $currVal = parseFloat($this.val());
+
+    if (isNaN($currVal)) {
+        $currVal = 0.0;
+    }
+
+    if (event.deltaFactor * event.deltaY > 0) {
+        if ($currVal + $inc <= $max) {
+            $this.val($currVal + $inc);
+        }
+    } else {
+        if ($currVal - $inc >= $min) {
+            $this.val($currVal - $inc);
+        }
+    }
+}
+function setWatermarkFields(){
+    setTimeout(function () {
+        let img = $('.watermark-img')[0]
+        console.log(img)
+        $('input[name="widthPx"]').val(img.naturalWidth)
+        $('input[name="heightPx"]').val(img.naturalHeight)
+    },40)
+}
+
+function changeOpacity(value){
+    $('.watermark-img').css('opacity',1 - value/10)
 }

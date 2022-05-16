@@ -546,5 +546,75 @@ class LocalizationTableSeeder extends Seeder
             'en' => 'Opacity',
             'ru' => 'Прозрачность',
         ]);
+        Localization::updateOrCreate([
+            'origin' => 'download_cropped',
+            'en' => 'Download cropped image',
+            'ru' => 'Скачать обрезаное изображение',
+        ]);
+
+        Localization::updateOrCreate([
+            'origin' => 'choose_watermark_image',
+            'en' => 'Choose watermark image',
+            'ru' => 'Выберите изображение водяного знака',
+        ]);
+
+        Localization::updateOrCreate([
+            'origin' => 'error_hint',
+            'en' => ' your Images just press button.  If you find a problem or an error, please contact us. We are working on improving the tool.',
+            'ru' => ' изображения, просто нажмите кнопку. Если вы обнаружите проблему или ошибку, пожалуйста, свяжитесь с нами. Мы работаем над улучшением инструмента.',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => 'to_compress',
+            'en' => 'To compress',
+            'ru' => 'Чтобы сжать ',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => 'to_convert',
+            'en' => 'To convert',
+            'ru' => 'Чтобы конвертировать',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => 'html_to_image_hint',
+            'en' => 'Enabling this option may cause conversion issues. We suggest you to disable it if you see a bad page preview',
+            'ru' => 'Включение этой опции может вызвать проблемы с преобразованием. Мы предлагаем вам отключить его, если вы видите плохой предварительный просмотр страницы.',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => '',
+            'en' => '',
+            'ru' => '',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => '',
+            'en' => '',
+            'ru' => '',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => '',
+            'en' => '',
+            'ru' => '',
+        ]);
+
+        Localization::updateOrCreate([
+            'origin' => '',
+            'en' => '',
+            'ru' => '',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => '',
+            'en' => '',
+            'ru' => '',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => '',
+            'en' => '',
+            'ru' => '',
+        ]);
+        Localization::updateOrCreate([
+            'origin' => '',
+            'en' => '',
+            'ru' => '',
+        ]);
+
+
     }
 }

@@ -22,7 +22,7 @@ class ImageRequest extends FormRequest
     {
         return [
             'files'=> 'required|array',
-            'files.*' =>'required|mimes:jpg,png,gif,bmp,webp,svg,tif,psd'
+            'files.*' =>'required|mimes:jpg,png,gif,bmp,webp,svg,psd'
         ];
     }
 
