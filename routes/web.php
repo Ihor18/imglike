@@ -36,7 +36,7 @@ Route::group(['prefix' => "$prefix"], function () {
     Route::get('/convert-from-jpg', [ImageController::class, 'convertFromJpg'])->name('convert-from-jpg');
     Route::get('/photoshop', [ImageController::class, 'photoshop'])->name('photoshop');
     Route::get('/compress', [ImageController::class, 'compress'])->name('compress');
-
+    Route::get('/progress/{id}/{maxNumber}', [ImageActionController::class, 'getProgress']);
 
     //Action
     Route::post('/compress-image', [ImageActionController::class, 'compress'])->name('compress-image');
