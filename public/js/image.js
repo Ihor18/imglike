@@ -43,7 +43,6 @@ function mobileBtnClick() {
 
 async function handleDrop(e) {
     const files = await e.dataTransfer.files
-    console.log(files.length)
     if (files.length) {
         const input = document.getElementById('file_input_id');
         if (input.hasAttribute('multiple')) {
@@ -223,7 +222,7 @@ function resizeView() {
     document.body.getElementsByClassName('wrap-content')[0].style.display = 'none'
 }
 
- function previewImage(files) {
+function previewImage(files) {
 
     files = [...files]
     files.forEach((file) => {
@@ -255,10 +254,10 @@ function resizeView() {
     let cart = document.createElement('div')
     cart.className = 'crop-area'
     cart.setAttribute('id', fileName)
-     workArea.appendChild(cart)
-     $('.container')[2].appendChild(elm)
+    workArea.appendChild(cart)
+    $('.container')[2].appendChild(elm)
 
-    reader.onloadend =  function () {
+    reader.onloadend = function () {
 
         var img = document.createElement('img')
         img.src = reader.result
@@ -483,22 +482,27 @@ function resizeImage() {
                 }, 300);
             }
         })
-        // let iii = 0;
-        // while (iii !== 50) {
-        //     setTimeout(() => {
-        //         fetch('/progress/' + cookieName + '/' + maxProccess, {
-        //             method: 'GET'
-        //         }).then(response => response = response.json())
-        //             .then(data => resp = data).then(() => {
-        //             if (resp.action === 'progress') {
-        //                 setButtonProgress(resp.progress / (maxProccess + 1) * 100)
-        //             }
-        //         })
-        //     }, 200);
-        //     iii++;
-        // }
-    }
+        let requestCount = 0;
+        setButtonProgress(1 / (maxProccess + 1) * 100)
+        setTimeout(() => {
+            while (requestCount !== 50) {
+                (function (requestCount) {
+                    setTimeout(() => {
+                        fetch('/progress/' + cookieName + '/' + maxProccess, {
+                            method: 'GET'
+                        }).then(response => response = response.json())
+                            .then(data => resp = data).then(() => {
+                            console.log(resp)
+                            if (resp.action === 'progress') {
+                                setButtonProgress(resp.progress / (maxProccess + 1) * 100)
+                            }
+                        })
+                    }, 400*requestCount)
+                })(requestCount++);
+            }
+        }, 400)
 
+    }
 }
 
 function trackInput(val, isHeight) {
@@ -699,7 +703,7 @@ function htmlToImage() {
         wrapContent.appendChild(tool)
         $('.container')[2].appendChild(wrapContent)
         $('.content').removeClass('white')
-        $('[name="url"]').attr('old-html',$('[name="url"]')[0].value)
+        $('[name="url"]').attr('old-html', $('[name="url"]')[0].value)
     }
 
     sendData(url, formData, callback, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang] + ' url')
@@ -728,17 +732,17 @@ function convertHtml() {
     for (const [key, value] of Object.entries(data)) {
         formData.append(key, value);
     }
-    if ($('input[name="url"]').attr('old-html')==$('input[name="url"]')[1].value){
+    if ($('input[name="url"]').attr('old-html') == $('input[name="url"]')[1].value) {
         callback = function () {
             $('.wrap-content')[1].style.display = "none"
             $('.wrap-content')[2].style.display = "block"
         }
-    }else{
+    } else {
         callback = function () {
             for (img in resp) {
                 $('.html-area img')[0].src = 'data:image/' + img.split('.')[img.split('.').length - 1] + ';base64,' + resp[img];
             }
-            $('[name="url"]').attr('old-html',$('[name="url"]')[0].value)
+            $('[name="url"]').attr('old-html', $('[name="url"]')[0].value)
         }
     }
 
@@ -869,11 +873,11 @@ function watermarkConvert() {
         data['position_y'] = $('[name="y-value"]').val()
     }
 
-    if($('#watermark-options').attr('data-action')==='text'){
+    if ($('#watermark-options').attr('data-action') === 'text') {
         let color = hexToRgb($('input[name="color"]').val())
         let opacity = parseFloat(1 - Number('0.' + $('input[name="opacity"]').val()).toFixed(1))
         data['color'] = JSON.stringify([color.r, color.g, color.b, opacity])
-    }else{
+    } else {
         data['opacity'] = $('input[name="mark_opacity"]').val() * 10
         data['watermark_w'] = $('input[name="widthPx"]').val()
         data['watermark_h'] = $('input[name="heightPx"]').val()
@@ -888,7 +892,6 @@ function watermarkConvert() {
     }
     for (const [key, value] of Object.entries(data)) {
         formData.append(key, value);
-        console.log(key+'--'+value)
     }
     let text1 = localize['convert_from_capt'][currentLang]
     let failMessage = localize['not_empty_field'][currentLang]
@@ -908,14 +911,14 @@ function showWatermarkOptions(isText) {
         $('#angle').css('display', 'flex')
         $('#color').css('display', 'flex')
         $('#opacity').css('display', 'flex')
-        $('#watermark-options').attr('data-action','text')
-    }else{
+        $('#watermark-options').attr('data-action', 'text')
+    } else {
         $('#watermark_image').css('display', 'block')
-        $('#watermark-options').attr('data-action','image')
+        $('#watermark-options').attr('data-action', 'image')
     }
     $('#watermark-options').css('display', 'block')
     $('.btn-grey').css('display', 'none')
-  //  $('.capt').css('display', 'none')
+    //  $('.capt').css('display', 'none')
     $('.bottom-btn').css('display', 'flex')
 }
 
@@ -1148,6 +1151,7 @@ function randomString() {
 
 function setButtonProgress(percent) {
     let button = document.querySelector(".btn-resize")
+    button.border = '2px solid #ff4000'
     button.style.backgroundColor = '#EA1C4F'
     button.querySelector("p").style.filter = 'brightness(0) invert(1)';
     button.querySelector(".button__progress").style.width = `${parseInt(percent) + 2}%`;
@@ -1161,7 +1165,7 @@ function changeTab(element) {
     $('.' + tab).addClass('current');
 }
 
-function changeValOnWheel (event) {
+function changeValOnWheel(event) {
 
     $this = $(this);
     $inc = parseFloat($this.attr('step'));
@@ -1183,15 +1187,15 @@ function changeValOnWheel (event) {
         }
     }
 }
-function setWatermarkFields(){
+
+function setWatermarkFields() {
     setTimeout(function () {
         let img = $('.watermark-img')[0]
-        console.log(img)
         $('input[name="widthPx"]').val(img.naturalWidth)
         $('input[name="heightPx"]').val(img.naturalHeight)
-    },40)
+    }, 40)
 }
 
-function changeOpacity(value){
-    $('.watermark-img').css('opacity',1 - value/10)
+function changeOpacity(value) {
+    $('.watermark-img').css('opacity', 1 - value / 10)
 }

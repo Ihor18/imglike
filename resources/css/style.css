@@ -3022,11 +3022,11 @@ input[type=number] {
 
 .button__progress {
     position: absolute;
-    height: 108%;
+    height: 110%;
     width: 0%;
-    top: -1px;
+    top: -2px;
     left: -2px;
-    background: rgba(0, 0, 0, 0.2);
+    background: #ff4000;
     transition: width 0.3s;
 }
 
