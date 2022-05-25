@@ -1327,6 +1327,10 @@ footer .bottom-menu li a:hover {
     background: #EA1C4F;
     color: white;
 }
+.send-html:hover{
+    background: #EA1C4F;
+    color: white;
+}
 
 .sidebar .bottom-btn button:hover p:before {
     filter: brightness(0) invert(1);
@@ -2368,7 +2372,8 @@ a.close:hover {
     padding: 0 72px;
     height: 76px;
     font-size: 20px;
-    background: #EA1C4F;
+    background: #A39EA9;
+    position: relative;
     border-radius: 8px;
     margin-bottom: 20px;
 }
@@ -2378,7 +2383,7 @@ a.close:hover {
     margin-right: 16px;
 }
 
-.download-block .btn-download:hover {
+.download-block .button__progress:hover {
     background: #EF557B;
 }
 
@@ -3022,12 +3027,14 @@ input[type=number] {
 
 .button__progress {
     position: absolute;
-    height: 110%;
+    height: 100%;
     width: 0%;
-    top: -2px;
-    left: -2px;
-    background: #ff4000;
-    transition: width 0.3s;
+    border-bottom-left-radius: 8px;
+    border-top-left-radius: 8px;
+    top: 0px;
+    left: 0px;
+    background: #EA1C4F;
+    transition: width 0.7s;
 }
 
 .sidebar {

@@ -44,18 +44,22 @@
 
                 <div class="tabs card-body" style="height: 361px">
                     <div class="tabs tab-radiobox flex nowrap">
-                        <button class="item active" onclick="changeTab(this)" data-tab="tab-pixel">{{__('localization.in_pixels')}}</button>
-                        <button class="item" onclick="changeTab(this)" data-tab="tab-percent">{{__('localization.in_percents')}}</button>
+                        <button class="item active" onclick="changeTab(this)"
+                                data-tab="tab-pixel">{{__('localization.in_pixels')}}</button>
+                        <button class="item" onclick="changeTab(this)"
+                                data-tab="tab-percent">{{__('localization.in_percents')}}</button>
                     </div>
                     <div class="tab-content current tab-pixel">
                         <div class="row flex aic jcsb">
                             <p>{{__('localization.width')}}, px</p>
-                            <input type="number" name="widthPx" onwheel="changeValOnWheel(this.event,'resizeW')" step="1" min="1" max="9999" old-val="1920" onchange="trackInput(this.value)"
+                            <input type="number" name="widthPx" onwheel="changeValOnWheel(this.event,'resizeW')"
+                                   step="1" min="1" max="9999" old-val="1920" onchange="trackInput(this.value)"
                                    value="1920">
                         </div>
                         <div class="row flex aic jcsb">
                             <p>{{__('localization.height')}}, px</p>
-                            <input type="number" name="heightPx" onwheel="changeValOnWheel(this.event,'resizeH')" step="1" min="1" max="9999" old-val="1080" onchange="trackInput(this.value,true)"
+                            <input type="number" name="heightPx" onwheel="changeValOnWheel(this.event,'resizeH')"
+                                   step="1" min="1" max="9999" old-val="1080" onchange="trackInput(this.value,true)"
                                    value="1080">
                         </div>
                         <label class="wrp-select wrp-checkbox mt-20">{{__('localization.keep_proportions')}}
@@ -85,9 +89,8 @@
                     </div>
 
                     <div class="bottom-btn flex jcc">
-                        <button type="button" style="position: relative" class="btn-resize" onclick="resizeImage()">
-                            <div class="button__progress"></div>
-                            <p>{{__('localization.change').' '.__('localization.size')}}</p>
+                        <button type="button" class="btn-resize" onclick="resizeImage()">
+                            {{__('localization.change').' '.__('localization.size')}}
                         </button>
                     </div>
                 </div>

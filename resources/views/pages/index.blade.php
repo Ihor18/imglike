@@ -76,7 +76,7 @@
                         <div class="icon">
                             <img src="{{asset('img/icon-convert-1.svg')}}">
                         </div>
-                        <p>{{__('localization.convert').' '.__('localization.from')}}</p>
+                        <p>{{__('localization.convert').' '.__('localization.from')}} JPG</p>
                         <span>{{__('localization.index_compress_capt')}}</span></a>
                 </li>
                 <li>

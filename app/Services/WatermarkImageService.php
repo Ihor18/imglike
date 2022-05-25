@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Intervention\Image\Facades\Image;
 
@@ -9,10 +10,16 @@ class WatermarkImageService
 {
     public static function watermark($request)
     {
-        $readyImages = [];
+        info($request);
+        $process = 1;
+        ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
 
-        foreach ($request['files'] as $file) {
-            $path = $file->getClientOriginalName();
+        foreach ($request['files'] as $path) {
+
+            $pathArr = explode('/', $path);
+            $fileName = $pathArr[count($pathArr) - 1];
+            $file = new UploadedFile($path, $fileName);
+
             $img = Image::make($file);
 
             $width = $img->width();
@@ -51,16 +58,25 @@ class WatermarkImageService
                     $font->angle($request['angle']);
                 });
             } else {
-                $watermarkImage = Image::make($request['watermark_file'])->opacity(100 - $request['opacity'])->resize($request['watermark_w'], $request['watermark_h']);
+                $watermarkPath = $request['watermark_file'];
+                $pathArray = explode('/', $watermarkPath);
+                $watermarkName = $pathArray[count($pathArray) - 1];
+                $wtFile = new UploadedFile($watermarkPath, $watermarkName);
+
+                $watermarkImage = Image::make($wtFile)->opacity(100 - $request['opacity'])->resize($request['watermark_w'], $request['watermark_h']);
                 $img->insert($watermarkImage, $request['position_mark'], $x, $y);
             }
-            $img->save(storage_path('app/public/' . $path));
-            $files[] = $path;
+            $img->save($path);
+            $files[] = $file;
+
+            ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
+            $process++;
         }
-        ZipArchiveService::makeZipFromPath($files, $request['time']);
-        $readyImages['watermark.zip'] = base64_encode(file_get_contents(storage_path('app/public/' . $request['time'] . '.zip')));
-        unlink(storage_path('app/public/' . $request['time'] . '.zip'));
-        return $readyImages;
+        if(isset($wtFile)){
+            unlink($wtFile->getPathname());
+        }
+        ZipArchiveService::makeZip($files, $request['id']);
+        ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
     }
 
 }

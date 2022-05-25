@@ -5,73 +5,83 @@ namespace App\Services;
 
 
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Intervention\Image\Facades\Image;
 
 class ResizeImageService
 {
-    public function resize(Request $request)
+    public function resize($request)
     {
-        $readyImages = [];
         $process = 1;
-        foreach ($request->file('files') as $file) {
-            $key =  $file->getClientOriginalName();
+        ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
+        foreach ($request['files'] as $path) {
+
+            $pathArr = explode('/', $path);
+            $fileName = $pathArr[count($pathArr) - 1];
+            $file = new UploadedFile($path, $fileName);
+            $key = $file->getClientOriginalName();
             $img = Image::make($file);
-            $path = $file->getClientOriginalName();
-            if ($file->getClientMimeType() == "image/gif") {
-                $width = $request->widthPx ?? $img->getWidth() * (1 - $request->reduce);
-                $height = $request->heightPx ?? $img->getHeight() * (1 - $request->reduce);
+
+            if (explode('.', $fileName)[1] == "gif") {
+                $width = $request['widthPx'] ?? $img->getWidth() * (1 - $request['reduce']);
+                $height = $request['heightPx'] ?? $img->getHeight() * (1 - $request['reduce']);
                 $degree = $request['rotates'][$key] ?? 0;
 
-                $this->rotateGIF($file, $degree, $width, $height, storage_path('app/public/' . $path));
-                $files[] = $path;
+                $this->rotateGIF($file, $degree, $width, $height, $path);
+                $files[] = $file;
             } else {
 
-                if (isset($request->widthPx)) {
-                    $img->resize($request->widthPx, $request->heightPx)->save(storage_path('app/public/' . $path),100);
+                if (isset($request['widthPx'])) {
+                    $img->resize($request['widthPx'], $request['heightPx'])->save($path, 100);
                 } else {
-                    $reduce = 1 - $request->reduce;
-                    $img->resize($img->getWidth() * $reduce, $img->getHeight() * $reduce)->save(storage_path('app/public/' . $path),100);
+                    $reduce = 1 - $request['reduce'];
+                    $img->resize($img->getWidth() * $reduce, $img->getHeight() * $reduce)->save($path, 100);
                 }
 
                 if (isset($request['rotates'][$key])) {
-                    $img->rotate($request['rotates'][$key])->save(storage_path('app/public/' . $path),100);
+                    $img->rotate(360-$request['rotates'][$key])->save($path, 100);
                 }
-                $files[] = $path;
+                $files[] = $file;
             }
-            ProccessbarService::writeToFile($request->cookieName,$process);
+            ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
             $process++;
         }
-        ZipArchiveService::makeZipFromPath($files, $request['time']);
-        $readyImages['resized.zip'] = base64_encode(file_get_contents(storage_path('app/public/' . $request['time'] . '.zip')));
-        unlink(storage_path('app/public/' . $request['time'] . '.zip'));
-        ProccessbarService::writeToFile($request->cookieName,$process);
-        return $readyImages;
+        ZipArchiveService::makeZip($files, $request['id']);
+        ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
+
     }
 
     public function rotate($request)
     {
-        $readyImages = [];
+        $process = 1;
+        ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
+        foreach ($request['files'] as $path) {
 
-        foreach ($request['files'] as $file) {
-            $key =  $file->getClientOriginalName();
-            $path = $file->getClientOriginalName();
-            if ($file->getClientMimeType() == "image/gif") {
-                $this->rotateGIF($file, $request['rotates'][$key],null,null,storage_path('app/public/' . $path));
-                $files[] = $path;
-            } else {
+            $pathArr = explode('/', $path);
+            $fileName = $pathArr[count($pathArr) - 1];
+            $file = new UploadedFile($path, $fileName);
+            $key = $file->getClientOriginalName();
 
-                if (isset($request['rotates'][$key])) {
-                    $img = Image::make($file)->rotate($request['rotates'][$key])->save(storage_path('app/public/' . $path));
+            if (isset($request['rotates'][$key])) {
+                $degree = $request['rotates'][$key];
+
+                if (explode('.', $fileName)[1] == "gif") {
+                    $this->rotateGIF($file,  360 -$degree, null, null, $path);
                 } else {
-                    $img = Image::make($file)->save(storage_path('app/public/' . $path));
+                    Image::make($file)->rotate($degree)->save($path);
                 }
-                $files[] = $path;;
+
+            } else {
+                Image::make($file)->save($path);
             }
+            $files[] = $file;
+            ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
+            $process++;
         }
-        ZipArchiveService::makeZipFromPath($files, $request['time']);
-        $readyImages['rotated.zip'] = base64_encode(file_get_contents(storage_path('app/public/' . $request['time'] . '.zip')));
-        unlink(storage_path('app/public/' . $request['time'] . '.zip'));
-        return $readyImages;
+
+        ZipArchiveService::makeZip($files, $request['id']);
+        ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
     }
 
     public function rotateGIF($file, $degree, $newHeight = null, $newWidth = null, $path = null)

@@ -38,7 +38,7 @@
                 <div class="card-header no-after">
                     <p>{{__('localization.compress').' '.__('localization.image')}}</p>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="min-height: 190px">
                     <div class="hint">{{__('localization.to_compress').__('localization.error_hint')}} </div>
                 </div>
             </div>

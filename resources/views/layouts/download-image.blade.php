@@ -1,7 +1,9 @@
 <div class="wrap-content" style="display: none">
     <div class="download-block">
         <img class="image" src="{{asset('img/images.svg')}}">
-        <button class="btn-download" onclick="{{$click ?? 'load()'}}"><img src="{{asset('img/cloud.svg')}}">{{$btnTitle}}
+        <button class="btn-download" disabled onclick="{{$click ?? 'load()'}}">
+            <div class="button__progress"></div>
+            <p><img src="{{asset('img/cloud.svg')}}">{{$btnTitle}}</p>
         </button>
         <div class="btns-share">
             <button><img src="{{asset('img/google-drive.svg')}}"><span>Google Drive</span></button>

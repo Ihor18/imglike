@@ -8,19 +8,19 @@ use Illuminate\Support\Facades\Storage;
 class ProccessbarService
 {
 
-    public static function writeToFile($key, $value)
+    public static function writeToFile($path, $value)
     {
-        Storage::disk('local')->put($key.'.txt',$value);
+        Storage::disk('local')->put('/public/' . $path, $value);
     }
 
-    public static function getFromFile($key)
+    public static function getFromFile($path)
     {
-        return Storage::disk('local')->get($key.'.txt');
+        return Storage::disk('local')->get('public/'.$path);
     }
 
-    public static function removeFile($key)
+    public static function removeFile($path)
     {
-        return Storage::disk('local')->delete($key.'.txt');
+        Storage::disk('local')->delete('public/'.$path);
     }
 
 }

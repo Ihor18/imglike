@@ -358,9 +358,10 @@ function uploadRefresh() {
 function sendRequest() {
     let url = '/compress-image'
     let formData = new FormData()
+    let cookieName = randomString()
     let csrf = document.querySelector('meta[name="csrf-token"]').content;
     formData.append('_token', csrf);
-
+    formData.append('id', cookieName)
     for (let key in fileLs) {
         formData.append('files[]', fileLs[key])
     }
@@ -368,39 +369,51 @@ function sendRequest() {
     for (let key in rotateLs) {
         formData.append('rotates[' + key + ']', rotateLs[key])
     }
-    let callback = function () {
+
+    let text = localize['compress_capt'][currentLang]
+    let failMessage = localize['extension_error'][currentLang]
+    sendData(url, formData, afterSend(), text, failMessage)
+
+
+    let compressUrl = '/progress/compress';
+    let progressData = new FormData()
+    progressData.append('_token', csrf);
+    progressData.append('maxNumber', Object.keys(fileLs).length+1)
+    progressData.append('id', cookieName)
+
+    endCallback = function () {
         let elem = document.createElement('div')
         elem.className = "capt"
-        let oldSize = (resp['old-size'] / 1000000).toFixed(2)
-        let newSize = (resp['new-size'] / 1000000).toFixed(2)
+        let oldSize = (resp['old'] / 1000000).toFixed(2)
+        let newSize = (resp['new'] / 1000000).toFixed(2)
         let compressResult = Math.round(100 - (newSize / oldSize * 100))
         if (oldSize / newSize > 1) {
             elem.innerHTML = localize['reduce_by'][currentLang] + " " + compressResult + "%<br>" + oldSize + "MB > " +
                 newSize + "MB"
         }
         $('.container')[1].appendChild(elem)
-        delete resp['old-size']
-        delete resp['new-size']
-        afterSend()
+        delete resp['old']
+        delete resp['new']
     }
-    let text = localize['compress_capt'][currentLang]
-    let failMessage = localize['extension_error'][currentLang]
-    sendData(url, formData, callback, text, failMessage)
+
+    checkProgress(progressData, endCallback, compressUrl)
 }
 
 function load() {
     loaderPlay()
     for (img in resp) {
-        var a = document.createElement('a');
-        let data_type = 'image'
-        if (img.split('.')[img.split('.').length - 1] === 'zip') {
-            data_type = 'application'
+        if (resp[img].length > 100) {
+            var a = document.createElement('a');
+            let data_type = 'image'
+            if (img.split('.')[img.split('.').length - 1] === 'zip') {
+                data_type = 'application'
+            }
+            a.href = 'data:' + data_type + '/' + img.split('.')[img.split('.').length - 1] + ';base64,' + resp[img];
+            a.download = img;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
-        a.href = 'data:' + data_type + '/' + img.split('.')[img.split('.').length - 1] + ';base64,' + resp[img];
-        a.download = img;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
     }
     loaderStop()
 }
@@ -414,7 +427,7 @@ function resizeImage() {
     let height
     let cookieName = randomString()
     formData.append('_token', csrf);
-    formData.append('cookieName', cookieName)
+    formData.append('id', cookieName)
     for (let key in fileLs) {
         formData.append('files[]', fileLs[key])
     }
@@ -437,7 +450,7 @@ function resizeImage() {
     let text = localize['convert_from_capt'][currentLang]
     let failMessage = localize['extension_error'][currentLang]
 
-    let isSend = true
+
     if (isPixel && $('input[name="not-scale"]')[0].checked) {
         let block = $('.wrp-img')
         for (let i = 0; i < Object.keys(fileLs).length; i++) {
@@ -452,57 +465,21 @@ function resizeImage() {
         }
     }
 
-    if (isSend) {
-        let isProgress = true;
-        let url = 'resize-image';
-        let maxProccess = Object.keys(fileLs).length + 1
-        formData.append('time', time)
-        fetch(url, {
-            method: 'POST',
-            body: formData
-        }).then(response => response = response.json())
-            .then(data => resp = data).then(() => {
+    let url = 'resize-image';
 
-            if (resp.hasOwnProperty('errors') && resp.errors.file) {
-                renewUploadPlace(text)
-                alert(failMessage)
-            } else if (resp.hasOwnProperty('errors') && resp.errors.url) {
-                renewHTML(text)
-                alert(failMessage)
-            } else if (resp.hasOwnProperty('errors') && resp.errors.field) {
-                loaderStop()
-                alert(failMessage)
-            } else {
-                $('.safe-transfer')[0].style.display = "none"
-                isProgress = false;
-                setButtonProgress(100);
-                setTimeout(() => {
-                    $('.wrap-content')[0].style.display = "none"
-                    $('.wrap-content')[2].style.display = "block"
-                }, 300);
-            }
-        })
-        let requestCount = 0;
-        setButtonProgress(1 / (maxProccess + 1) * 100)
-        setTimeout(() => {
-            while (requestCount !== 50) {
-                (function (requestCount) {
-                    setTimeout(() => {
-                        fetch('/progress/' + cookieName + '/' + maxProccess, {
-                            method: 'GET'
-                        }).then(response => response = response.json())
-                            .then(data => resp = data).then(() => {
-                            console.log(resp)
-                            if (resp.action === 'progress') {
-                                setButtonProgress(resp.progress / (maxProccess + 1) * 100)
-                            }
-                        })
-                    }, 400*requestCount)
-                })(requestCount++);
-            }
-        }, 400)
+    formData.append('id', cookieName)
 
-    }
+
+    sendData(url, formData, afterSend(), text, failMessage)
+
+
+    let progressData = new FormData()
+    progressData.append('_token', csrf);
+    progressData.append('maxNumber', Object.keys(fileLs).length + 1)
+    progressData.append('id', cookieName)
+    progressData.append('name', 'resized.zip')
+    checkProgress(progressData)
+
 }
 
 function trackInput(val, isHeight) {
@@ -531,28 +508,29 @@ function trackInput(val, isHeight) {
 async function sendData(url, formData, callback, text, failMessage) {
     loaderPlay()
     formData.append('time', time)
-    await fetch(url, {
+    fetch(url, {
         method: 'POST',
         body: formData
     }).then(response => response = response.json())
         .then(data => resp = data).then(() => {
+        if (resp.hasOwnProperty('errors') && resp.errors.file) {
+            renewUploadPlace(text)
+            alert(failMessage)
+        } else if (resp.hasOwnProperty('errors') && resp.errors.url) {
+            renewHTML(text)
+            alert(failMessage)
+        } else if (resp.hasOwnProperty('errors') && resp.errors.field) {
+            loaderStop()
+            alert(failMessage)
+        } else {
+            $('.safe-transfer')[0].style.display = "none"
 
-            if (resp.hasOwnProperty('errors') && resp.errors.file) {
-                renewUploadPlace(text)
-                alert(failMessage)
-            } else if (resp.hasOwnProperty('errors') && resp.errors.url) {
-                renewHTML(text)
-                alert(failMessage)
-            } else if (resp.hasOwnProperty('errors') && resp.errors.field) {
-                loaderStop()
-                alert(failMessage)
-            } else {
-                $('.safe-transfer')[0].style.display = "none"
-                callback && callback()
-            }
+            callback && callback()
+        }
 
-        })
-    loaderStop()
+    })
+
+
 }
 
 function rotate() {
@@ -563,8 +541,10 @@ function rotateImage() {
     let url = '/rotate-image'
     let formData = new FormData()
     let csrf = document.querySelector('meta[name="csrf-token"]').content;
-    formData.append('_token', csrf);
+    let cookieName = randomString();
 
+    formData.append('_token', csrf);
+    formData.append('id', cookieName)
     for (let key in fileLs) {
         formData.append('files[]', fileLs[key])
     }
@@ -574,15 +554,23 @@ function rotateImage() {
         formData.append('rotates[' + key + ']', rotateLs[key])
     }
 
-    sendData(url, formData)
-    afterSend()
-    loaderStop()
+    sendData(url, formData, afterSend())
+
+
+    let progressData = new FormData()
+    progressData.append('_token', csrf);
+    progressData.append('maxNumber', Object.keys(fileLs).length + 1)
+    progressData.append('id', cookieName)
+    progressData.append('name', 'rotated.zip')
+    checkProgress(progressData)
 }
 
 function afterSend() {
+    $('.safe-transfer')[0].style.display = "none"
     $('.wrap-content')[0].style.display = "none"
     $('.wrap-content')[2].style.display = "block"
     $('.tool-button')[0] !== undefined ? $('.tool-button')[0].style.display = "none" : ''
+    loaderStop()
 }
 
 function rotateDeg(degree) {
@@ -614,11 +602,14 @@ function reset() {
 }
 
 function prepareDownloadCrop() {
+    setTimeout(function () {
+        setButtonProgress(100)
+    }, 400)
+
     document.getElementsByClassName('wrap-content')[1].style.display = 'none'
     document.getElementsByClassName('wrap-content')[0].style.display = 'block'
     let wrap = document.createElement('div')
     wrap.className = 'wrap-content'
-
 }
 
 function crop() {
@@ -704,6 +695,8 @@ function htmlToImage() {
         $('.container')[2].appendChild(wrapContent)
         $('.content').removeClass('white')
         $('[name="url"]').attr('old-html', $('[name="url"]')[0].value)
+        loaderStop()
+
     }
 
     sendData(url, formData, callback, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang] + ' url')
@@ -711,6 +704,7 @@ function htmlToImage() {
 }
 
 function convertHtml() {
+
     let format = $('#format').find(":selected")[0].value
 
     let url = '/convert-html'
@@ -733,9 +727,15 @@ function convertHtml() {
         formData.append(key, value);
     }
     if ($('input[name="url"]').attr('old-html') == $('input[name="url"]')[1].value) {
+        $('.wrap-content')[1].style.display = "none"
+        $('.wrap-content')[2].style.display = "block"
+
+        setTimeout(function () {
+            setButtonProgress(50)
+        },200)
+
         callback = function () {
-            $('.wrap-content')[1].style.display = "none"
-            $('.wrap-content')[2].style.display = "block"
+            setButtonProgress(100);
         }
     } else {
         callback = function () {
@@ -747,6 +747,7 @@ function convertHtml() {
     }
 
     sendData(url, formData, callback, localize['convert_web_pages'][currentLang], localize['enter_correct'][currentLang] + ' url')
+    loaderStop()
 }
 
 function enterURL(value) {
@@ -852,6 +853,8 @@ function watermarkConvert() {
     let option = $('#position_mark>option:selected')
     let text = $('#text-input')
     let file = $('#watermark_file')[0]
+    let cookieName = randomString()
+
     text.css('display') === 'block' ? data['text'] = $('[name="watermark"]').val() : ''
 
     $('#font-size').css('display') === 'flex' ? data['font-size'] = $('[name="font-size"]').val() : ''
@@ -887,6 +890,7 @@ function watermarkConvert() {
     let formData = new FormData()
     let csrf = document.querySelector('meta[name="csrf-token"]').content;
     formData.append('_token', csrf);
+    formData.append('id',cookieName)
     for (let key in fileLs) {
         formData.append('files[]', fileLs[key])
     }
@@ -895,12 +899,20 @@ function watermarkConvert() {
     }
     let text1 = localize['convert_from_capt'][currentLang]
     let failMessage = localize['not_empty_field'][currentLang]
-    sendData(url, formData, function () {
-        $('.wrap-content')[0].style.display = "none"
-        $('.wrap-content')[1].style.display = "block"
-        $('.tool-button')[0] !== undefined ? $('.tool-button')[0].style.display = "none" : ''
 
-    }, text1, failMessage)
+    $('.wrap-content')[0].style.display = "none"
+    $('.wrap-content')[1].style.display = "block"
+
+    sendData(url, formData, null, text1, failMessage)
+
+
+    let progressData = new FormData()
+    progressData.append('_token', csrf);
+    progressData.append('maxNumber', Object.keys(fileLs).length + 1)
+    progressData.append('id', cookieName)
+    progressData.append('name', 'watermark.zip')
+    checkProgress(progressData)
+
 }
 
 
@@ -930,21 +942,28 @@ function convertToJpeg() {
     let url = '/convert-to'
     let formData = new FormData()
     let csrf = document.querySelector('meta[name="csrf-token"]').content;
+    let cookieName = randomString()
     formData.append('_token', csrf);
-
+    formData.append('id', cookieName)
     for (let key in fileLs) {
         formData.append('files[]', fileLs[key])
     }
 
+    sendData(url, formData,afterSend())
 
-    sendData(url, formData)
-    afterSend()
+    let progressData = new FormData()
+    progressData.append('_token', csrf);
+    progressData.append('maxNumber', Object.keys(fileLs).length + 1)
+    progressData.append('id', cookieName)
+    progressData.append('name', 'converted.zip')
+    checkProgress(progressData)
 }
 
 function convertFromJpeg() {
     let url = '/convert-from'
     let formData = new FormData()
     let csrf = document.querySelector('meta[name="csrf-token"]').content;
+    let cookieName = randomString()
     let data = []
 
     if ($('.item.active').data('tab') === 'tab-png') {
@@ -957,7 +976,7 @@ function convertFromJpeg() {
     }
 
     formData.append('_token', csrf);
-
+    formData.append('id', cookieName);
     for (let key in fileLs) {
         formData.append('files[]', fileLs[key])
     }
@@ -967,9 +986,15 @@ function convertFromJpeg() {
     }
     let text = localize['convert_web_pages'][currentLang]
     let failMessage = localize['incorrect_data'][currentLang]
-    sendData(url, formData, afterSend, text, failMessage)
+    sendData(url, formData, afterSend(), text, failMessage)
 
-
+    let progressData = new FormData()
+    progressData.append('_token', csrf);
+    progressData.append('maxNumber', Object.keys(fileLs).length + 1)
+    progressData.append('id', cookieName)
+    progressData.append('name', 'converted.zip')
+    checkProgress(progressData)
+    loaderStop()
 }
 
 function meme(file) {
@@ -1150,11 +1175,15 @@ function randomString() {
 }
 
 function setButtonProgress(percent) {
-    let button = document.querySelector(".btn-resize")
-    button.border = '2px solid #ff4000'
-    button.style.backgroundColor = '#EA1C4F'
+    let button = document.querySelector(".btn-download")
     button.querySelector("p").style.filter = 'brightness(0) invert(1)';
-    button.querySelector(".button__progress").style.width = `${parseInt(percent) + 2}%`;
+    button.querySelector(".button__progress").style.width = `${parseInt(percent)}%`;
+    if (percent === 100) {
+        let progressBtn = document.querySelector(".button__progress")
+        progressBtn.style.borderBottomRightRadius = '8px'
+        progressBtn.style.borderTopRightRadius = '8px'
+        button.disabled = false
+    }
 }
 
 function changeTab(element) {
@@ -1198,4 +1227,35 @@ function setWatermarkFields() {
 
 function changeOpacity(value) {
     $('.watermark-img').css('opacity', 1 - value / 10)
+}
+
+function checkProgress(formdata, endCallback, url, progressCallback) {
+    let requestCount = 0;
+    let end = false;
+
+    setTimeout(() => {
+        while (requestCount !== 300) {
+            (function (requestCount) {
+                setTimeout(() => {
+                    if (!end) {
+                        fetch(url ? url : '/progress', {
+                            method: 'POST',
+                            body: formdata
+                        }).then(response => response = response.json())
+                            .then(data => resp = data).then(() => {
+
+                            if (resp.action === 'progress') {
+                                setButtonProgress(resp.progress / Object.keys(fileLs).length * 100)
+                                progressCallback && progressCallback()
+                            } else if (resp.action === 'end') {
+                                end = true
+                                setButtonProgress(100)
+                                endCallback && endCallback()
+                            }
+                        })
+                    }
+                }, 400 * requestCount)
+            })(requestCount++);
+        }
+    }, 400)
 }

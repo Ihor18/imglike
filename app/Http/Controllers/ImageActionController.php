@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\HTMLImageRequest;
 use App\Http\Requests\ImageRequest;
 use App\Http\Requests\WatermarkRequest;
+use App\Jobs\CompressJob;
+use App\Jobs\ConvertJPEGJob;
+use App\Jobs\ResizeJob;
+use App\Jobs\RotateJob;
+use App\Jobs\WatermarkJob;
 use App\Services\CompressImageService;
 use App\Services\ConvertJpegImage;
 use App\Services\HTMLImageService;
@@ -20,20 +25,28 @@ class ImageActionController extends Controller
 {
     public function compress(ImageRequest $request)
     {
-        $readyImages = (new CompressImageService)->compress($request);
-        return response()->json($readyImages);
+
+        $job = new CompressJob($this->getParams($request));
+        $this->dispatch($job);
+
+        return response('OK');
     }
 
     public function resize(ImageRequest $request)
     {
-        $readyImages = (new ResizeImageService)->resize($request);
-        return response()->json($readyImages);
+        $job = new ResizeJob($this->getParams($request));
+        $this->dispatch($job);
+
+        return response('OK');
     }
 
     public function rotate(ImageRequest $request)
     {
-        $readyImages = (new ResizeImageService)->rotate($request->all());
-        return response()->json($readyImages);
+        $job = new RotateJob($this->getParams($request));
+        $this->dispatch($job);
+
+        return response('OK');
+
     }
 
     public function htmlToImage(HTMLImageRequest $request)
@@ -48,34 +61,51 @@ class ImageActionController extends Controller
 
     public function watermark(WatermarkRequest $request)
     {
-        $readyImages = WatermarkImageService::watermark($request->all());
-        return response()->json($readyImages);
+        $job = new WatermarkJob($this->getParams($request));
+        $this->dispatch($job);
+        return response('OK');
     }
 
     public function convertToJpeg(ImageRequest $request)
     {
-        $readyImages = ConvertJpegImage::toJpeg($request->all());
-        return response()->json($readyImages);
+        $job = new ConvertJPEGJob($this->getParams($request),'convertToJPEG');
+        $this->dispatch($job);
+        return response('OK');
     }
 
     public function convertFromJpeg(ImageRequest $request)
     {
-        $readyImages = ConvertJpegImage::fromJpeg($request->all());
-        return response()->json($readyImages);
+        $job = new ConvertJPEGJob($this->getParams($request),'convertFromJPEG');
+        $this->dispatch($job);
+        return response('OK');
     }
 
-    public function getProgress(Request $request)
+
+    private function getParams($request)
     {
-        $progress = ProccessbarService::getFromFile($request->id);
-        Log::info($request->id);
-        if($request->maxNumber == $progress){
-            ProccessbarService::removeFile($request->id);
-            return response()->json([
-                'action' => 'end'
-            ]);
+        $params = $request->all();
+
+        if ($request->hasfile('file')) {
+            $fileName = $request->file('file')->getClientOriginalName();
+            $params['file'] = storage_path('app/' . $request->file('file')->storeAs('public/downloads', $fileName));
         }
-        return response()->json([
-            'action' => 'progress',
-            'progress' => $progress]);
+        if ($request->hasfile('files')) {
+            $files = [];
+            foreach ($request->file('files') as $key => $file) {
+                $fileName = $file->getClientOriginalName();
+                $files[] = storage_path('app/' . $file->storeAs('public/downloads', $fileName));
+            }
+            $params['files'] = $files;
+        }
+        if ($request->hasfile('image')) {
+            $fileName = $request->file('image')->getClientOriginalName();
+            $params['image'] = storage_path('app/' . $request->file('image')->storeAs('public/downloads', $fileName));
+        }
+
+        if ($request->hasfile('watermark_file')) {
+            $fileName = $request->file('watermark_file')->getClientOriginalName();
+            $params['watermark_file'] = storage_path('app/' . $request->file('watermark_file')->storeAs('public/downloads', $fileName));
+        }
+        return $params;
     }
 }

@@ -47,7 +47,7 @@
             </div>
         </div>
         <div class="bottom-btn flex jcc">
-            <button onclick="convertToJpeg()"><img style="color: red" src="{{asset('img/icon-convert.svg')}}"> {{__('localization.compress').' '.__('localization.image')}}</button>
+            <button onclick="convertToJpeg()"><img style="color: red" src="{{asset('img/icon-convert.svg')}}"> {{__('localization.convert').' '.__('localization.in').' '."JPG"}}</button>
         </div>
     </div>
 

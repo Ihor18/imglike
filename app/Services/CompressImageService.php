@@ -6,63 +6,72 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class CompressImageService
 {
 
-    public function compress(Request $request)
+    public function compress($request)
     {
-        $readyImages = [];
-        $request = $request->all();
-        $readyImages['old-size'] = 0;
-        $readyImages['new-size'] = 0;
 
-        foreach ($request['files'] as $file) {
-            if ($file->getPathname()) {
+        $process = 1;
+        ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
+        $oldSize = 0;
+        $newSize = 0;
+        $files = [];
+        foreach ($request['files'] as $path) {
 
+            $pathArr = explode('/', $path);
+            $fileName = $pathArr[count($pathArr) - 1];
+            $file = new UploadedFile($path, $fileName);
 
-                $readyImages['old-size'] += filesize($file);
-                $key = explode('.', $file->getClientOriginalName())[0];
-                if (isset($request['rotates'][$key])) {
-                    switch ($file->getMimeType()) {
-                        case 'image/jpeg':
-                            $this->rotateJPG($file, $request['rotates'][$key]);
-                            break;
-                        case 'image/gif':
-                            (new ResizeImageService())->rotateGIF($file, $request['rotates'][$key]);
-                            break;
-                        case 'image/png':
-                            $this->rotatePNG($file, $request['rotates'][$key]);
-                            break;
-                    }
+            $oldSize += filesize($file);
+            $key = $file->getClientOriginalName();
+
+            if (isset($request['rotates'][$key])) {
+                Log::info($request['rotates'][$key]);
+                switch ($file->getMimeType()) {
+                    case 'image/jpeg':
+                        $this->rotateJPG($file, $request['rotates'][$key], $path);
+                        break;
+                    case 'image/gif':
+                        (new ResizeImageService())->rotateGIF($file, $request['rotates'][$key], null, null, $path);
+                        break;
+                    case 'image/png':
+                        $this->rotatePNG($file, $request['rotates'][$key], $path);
+                        break;
                 }
-
-                $optimizerChain = OptimizerChainFactory::create();
-                $optimizerChain->optimize($file->getPathname());
-                $readyImages['new-size'] += filesize($file);
-
             }
+            $optimizerChain = OptimizerChainFactory::create();
+            $optimizerChain->optimize($file->getPathname());
+            $newSize += filesize($file);
+            $files[] = $file;
+            ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
+            $process++;
         }
-        ZipArchiveService::makeZip($request['files'],$request['time']);
-        $readyImages['compressed.zip'] = base64_encode(file_get_contents(storage_path('app/public/'.$request['time'].'.zip')));
-        unlink(storage_path('app/public/'.$request['time'].'.zip'));
-        return $readyImages;
+
+        ZipArchiveService::makeZip($files, $request['id']);
+        ProccessbarService::writeToFile('compress/' . $request['id'] . '.txt', $oldSize . ' ' . $newSize);
+        ProccessbarService::writeToFile('text/' . $request['id'] . '.txt', $process);
+
     }
 
-    private function rotatePNG($file, $degree)
+    private function rotatePNG($file, $degree, $path)
     {
+
         $image = imagecreatefrompng($file);
-        $rotated = $this->rotate($file, $image, $degree);
-        imagepng($rotated, $file->getPathname());
+        $rotated = $this->rotate($file, $image, 360 - $degree);
+        imagepng($rotated, $path,0);
     }
 
 
-    private function rotateJPG($file, $degree)
+    private function rotateJPG($file, $degree, $path)
     {
         $image = imagecreatefromjpeg($file);
-        $rotated = imagerotate($image, $degree, 0);
-        imagejpeg($rotated, $file->getPathname());
+        $rotated = imagerotate($image, 360-$degree, 0);
+        imagejpeg($rotated, $path, 100);
     }
 
     private function rotate($file, $image, $degree)
@@ -73,7 +82,7 @@ class CompressImageService
         $dimg = imagecreatetruecolor($width, $height);
 
         $bgColor = imagecolorallocatealpha($image, 255, 255, 255, 127);
-        $rotated  = imagerotate($image, $degree, $bgColor);
+        $rotated = imagerotate($image, $degree, $bgColor);
         imagesavealpha($rotated, true);
 
         return $rotated;

@@ -2,10 +2,13 @@
 
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\ProgressController;
+use App\Services\ProccessbarService;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImageActionController;
 
 use App\Services\HTMLImageService;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +39,7 @@ Route::group(['prefix' => "$prefix"], function () {
     Route::get('/convert-from-jpg', [ImageController::class, 'convertFromJpg'])->name('convert-from-jpg');
     Route::get('/photoshop', [ImageController::class, 'photoshop'])->name('photoshop');
     Route::get('/compress', [ImageController::class, 'compress'])->name('compress');
-    Route::get('/progress/{id}/{maxNumber}', [ImageActionController::class, 'getProgress']);
+
 
     //Action
     Route::post('/compress-image', [ImageActionController::class, 'compress'])->name('compress-image');
@@ -46,6 +49,8 @@ Route::group(['prefix' => "$prefix"], function () {
     Route::post('/make-watermark', [ImageActionController::class, 'watermark'])->name('make-watermark');
     Route::post('/convert-from', [ImageActionController::class, 'convertFromJpeg'])->name('convert-from');
     Route::post('/convert-to', [ImageActionController::class, 'convertToJpeg'])->name('convert-to');
+    Route::post('/progress/compress', [ProgressController::class, 'compress']);
+    Route::post('/progress',[ProgressController::class,'getProgress']);
 
     Route::get('/auth/google', 'App\Http\Controllers\GoogleController@redirectToGoogle')->name('auth-google');
     Route::get('/auth/google/callback', 'App\Http\Controllers\GoogleController@handleGoogleCallback');

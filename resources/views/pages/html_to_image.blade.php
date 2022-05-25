@@ -21,7 +21,10 @@
                         </div>
 
                     </form>
-                    <button onclick="htmlToImage()">{{__('localization.add')}} URL</button>
+
+                        <button class="send-html" onclick="htmlToImage()">{{__('localization.add')}} URL</button>
+
+
                 </div>
             </div>
             @include('layouts.safe-transfer')
