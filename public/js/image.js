@@ -397,6 +397,7 @@ function sendRequest() {
     }
 
     checkProgress(progressData, endCallback, compressUrl)
+    loaderStop()
 }
 
 function load() {
@@ -479,7 +480,7 @@ function resizeImage() {
     progressData.append('id', cookieName)
     progressData.append('name', 'resized.zip')
     checkProgress(progressData)
-
+    loaderStop()
 }
 
 function trackInput(val, isHeight) {
@@ -563,6 +564,7 @@ function rotateImage() {
     progressData.append('id', cookieName)
     progressData.append('name', 'rotated.zip')
     checkProgress(progressData)
+    loaderStop()
 }
 
 function afterSend() {
@@ -570,7 +572,6 @@ function afterSend() {
     $('.wrap-content')[0].style.display = "none"
     $('.wrap-content')[2].style.display = "block"
     $('.tool-button')[0] !== undefined ? $('.tool-button')[0].style.display = "none" : ''
-    loaderStop()
 }
 
 function rotateDeg(degree) {
@@ -912,7 +913,7 @@ function watermarkConvert() {
     progressData.append('id', cookieName)
     progressData.append('name', 'watermark.zip')
     checkProgress(progressData)
-
+    loaderStop()
 }
 
 
@@ -957,6 +958,7 @@ function convertToJpeg() {
     progressData.append('id', cookieName)
     progressData.append('name', 'converted.zip')
     checkProgress(progressData)
+    loaderStop()
 }
 
 function convertFromJpeg() {

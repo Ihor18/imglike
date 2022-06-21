@@ -64,7 +64,6 @@ class ConvertJpegImage
                     $process++;
                 }
             } else {
-                info(2);
                 if ($request['save_prop']) {
                     $pathArr = explode('/', $request['files'][0]);
                     $fileName = $pathArr[count($pathArr) - 1];
